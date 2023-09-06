@@ -1,16 +1,20 @@
 @extends('layouts.app')
 
+@push('scripts')
+<script type="text/javascript" src="/js/imageSelector.js"></script>
+@endpush
+
 @section('content')
 <div style="height: 90.5vh;" class="overflow-y-auto scrollbar-none hooky-scrollbar">
 	<div class="flex flex-col items-center w-full h-2/3 px-72">
 		<div class="h-full flex pb-5">
-			<img src="{{ $selectedImage }}" alt="{{ $profile->display_name }}" class="h-full object-contain rounded-lg">
+			<img id="selected-image" src="{{ $selectedImage }}" alt="{{ $profile->display_name }}" class="h-full object-contain rounded-lg">
 		</div>
 
 		<div class="w-1/3 h-1/3 flex flex-row justify-start">
 			@foreach ($photos as $photo)
-			<div class="w-full h-full">
-				<img src="{{ $photo }}" alt="{{ $profile->display_name }}" class="h-full object-contain rounded-lg cursor-pointer pr-2" wire:click="select($photo)">
+			<div class="w-full h-full pr-2">
+				<img src="{{ $photo }}" alt="{{ $profile->display_name }}" class="h-full object-cover rounded-lg cursor-pointer" onclick="selectImage('{{ $photo }}', event)">
 			</div>
 			@endforeach
 		</div>

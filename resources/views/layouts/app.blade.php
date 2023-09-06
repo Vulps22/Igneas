@@ -24,11 +24,11 @@
 	@livewireStyles
 </head>
 
-<body class="bg-neutral-900 text-white">
+<body class="bg-neutral-900 text-white h-screen">
 	<div id="app">
 		@include('components.navbar')
 
-		<main class="py-4">
+		<main class="pt-4">
 			@yield('content')
 		</main>
 	</div>
