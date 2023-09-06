@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+body {
+	overflow:hidden;
+}
+
+.hooky-scrollbar::-webkit-scrollbar {
+	width: 12px;
+}
+
+.hooku-scrollbar::-webkit-scrollbar-track {
+	background-color: #f5f5f5;
+	border-radius: 10px;
+}
+
+.hooky-scrollbar::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: #dcdcdc;
+}
+
+.hooku-scrollbar::-webkit-scrollbar-button {
+	width: 0;
+	height: 0;
+	display: none;
+}

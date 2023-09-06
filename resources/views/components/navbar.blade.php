@@ -1,4 +1,4 @@
-<nav class="flex grow items-center justify-between p-6 lg:px-8" aria-label="Global">
+<nav class="flex grow items-center justify-between px-6 py-3 lg:px-8" aria-label="Global">
 	<!-- Logo -->
 	<div class="flex pr-20">
 		<a href="/" class="-m-1.5 p-1.5">
