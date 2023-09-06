@@ -43,7 +43,12 @@ class UserProfile extends Model
 	public function images()
 	{
 		//order by position low to high
-		return $this->hasMany(UserImage::class)->orderBy('position', 'asc');
+		return $this->user->images();
+	}
+
+	public function primaryImage()
+	{
+		return $this->user->images()->first();
 	}
 
 	public function addImage($filename, $position = null)
@@ -57,6 +62,11 @@ class UserProfile extends Model
 		]);
 
 		return true;
+	}
+
+	public function age()
+	{
+		return $this->user->age();
 	}
 
 }

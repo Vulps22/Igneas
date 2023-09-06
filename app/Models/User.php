@@ -48,6 +48,7 @@ class User extends Authenticatable
 		'email_verified_at' => 'datetime',
 		'password' => 'hashed',
 		'location' => Point::class,
+		'date_of_birth' => 'date',
 
 	];
 
@@ -64,5 +65,17 @@ class User extends Authenticatable
 	public function health()
 	{
 		return $this->hasOne(UserHealth::class);
+	}
+
+	public function age()
+	{
+		//calculate the user's age
+		return $this->date_of_birth->diffInYears(now());
+	}
+
+	public function images()
+	{
+		//order by position low to high
+		return $this->hasMany(UserImage::class)->orderBy('position', 'asc');
 	}
 }

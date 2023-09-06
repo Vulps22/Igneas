@@ -24,7 +24,7 @@ class HomeController extends Controller
 	public function index()
 	{
 		//get 50 users near the current user
-		$users[] = User::find(1);
+		$users[] = 1;
 		$users[] = $users[0];
 		$users[] = $users[0];
 		$users[] = $users[0];
