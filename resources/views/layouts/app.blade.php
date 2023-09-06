@@ -17,6 +17,8 @@
 	<!-- Scripts -->
 	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
 	@livewireScripts
+	@stack('scripts')
+	<script src="https://kit.fontawesome.com/ac7deee7ba.js" crossorigin="anonymous"></script>
 
 	<!-- Styles -->
 	@livewireStyles

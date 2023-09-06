@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\HomeController;
 use App\Livewire\ProfileEditor;
+use App\Livewire\ProfileView;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,6 +33,7 @@ Route::get('/logout', 'App\Http\Controllers\Auth\LoginController@logout')->name(
 //Authorised routes
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/profile', ProfileEditor::class)->name('profile.editor');
+Route::get('/profile/{userId}', ProfileView::class)->name('profile.view');
 
 //userController routes
 Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location');

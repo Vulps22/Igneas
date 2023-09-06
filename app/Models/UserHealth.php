@@ -19,6 +19,12 @@ class UserHealth extends Model
 		'show_hiv_status',
 	];
 
+	protected $casts = [
+		'last_STI_test' => 'date',
+		'on_prep' => 'boolean',
+		'show_hiv_status' => 'boolean',
+	];
+
 	public function user()
 	{
 		return $this->belongsTo(User::class);
