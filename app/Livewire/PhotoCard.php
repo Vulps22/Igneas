@@ -50,11 +50,11 @@ class PhotoCard extends Component
 
 	public function removeImage()
 	{
-		dd($this->image);
 		Storage::delete($this->imageModel->filename);
-		$this->imageModel->delete();
+		$this->imageModel->filename = "";
+		$this->imageModel->save();
 		$this->image = null;
-		$this->imageModel = null;
+		$this->url = null;
 	}
 
 
