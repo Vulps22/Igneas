@@ -55,4 +55,14 @@ class User extends Authenticatable
 	{
 		return parent::query();
 	}
+
+	public function profile()
+	{
+		return $this->hasOne(UserProfile::class);
+	}
+
+	public function health()
+	{
+		return $this->hasOne(UserHealth::class);
+	}
 }

@@ -43,11 +43,11 @@ class LoginController extends Controller
 	public function login(Request $request){
 		$this->validate($request, [
 			'email' => 'required|email',
-			'password' => 'required|min:8'
+			'password' => 'required'
 		]);
 
 		if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-			return redirect()->intended('home');
+			return redirect()->route('home');
 		}
 		return back()->withInput($request->only('email'));
 	}

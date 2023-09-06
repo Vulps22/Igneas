@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\UserHealth;
+use App\Models\UserProfile;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -85,8 +87,18 @@ class RegisterController extends Controller
 		
 		if(!$user) return redirect()->back()->withErrors(['error' => 'An error occurred while creating your account. Please try again.']);
 
-		auth()->login($user);
+		$profile = UserProfile::create([
+			'user_id' => $user->id,
+		]);
+		$profile->save();
 
-		return redirect()->route('home');
+		$health = UserHealth::create([
+			'user_id' => $user->id,
+		]);
+		$health->save();
+
+		auth()->loginUsingId($user->id);
+
+		return redirect()->route('profile-editor');
 	}
 }

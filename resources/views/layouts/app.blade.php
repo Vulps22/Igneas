@@ -16,6 +16,10 @@
 
 	<!-- Scripts -->
 	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
+	@livewireScripts
+
+	<!-- Styles -->
+	@livewireStyles
 </head>
 
 <body class="bg-neutral-900 text-white">

@@ -19,7 +19,10 @@
 
 	<!-- Desktop nav -->
 	<div class="lg:flex grow">
-		<a href="/" class="text-sm leading-6">Home</a>
+		@auth
+		<a href="/home" class="text-sm leading-6 pl-5">Home</a>
+		<a href="/profile" class="text-sm leading-6 pl-5">Profile</a>
+		@endauth
 	</div>
 	<div class="hidden lg:flex lg:flex-1 lg:justify-end">
 		@guest
