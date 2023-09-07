@@ -99,6 +99,6 @@ class RegisterController extends Controller
 
 		auth()->loginUsingId($user->id);
 
-		return redirect()->route('profile-editor');
+		return redirect()->route('profile.editor');
 	}
 }
