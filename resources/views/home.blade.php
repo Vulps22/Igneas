@@ -5,7 +5,7 @@
 	<!--create a grid of 5 columns-->
 
 	@foreach($users as $user)
-		<livewire:profile-card :user_id="$user" :key="$user" />
+		<livewire:profile-card :user_id="$user" />
 	@endforeach
 	</div>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use MatanYadaev\EloquentSpatial\Objects\Geometry;
 
 class HomeController extends Controller
 {
@@ -23,16 +24,16 @@ class HomeController extends Controller
 	 */
 	public function index()
 	{
-		//get 50 users near the current user
-		$users[] = 1;
-		$users[] = $users[0];
-		$users[] = $users[0];
-		$users[] = $users[0];
-		$users[] = $users[0];
-		$users[] = $users[0];
-		$users[] = $users[0];
-		$users[] = $users[0];
-		$users[] = $users[0];
+		// Get the current user's location
+		$currentUser = auth()->user();
+		$currentLocation = $currentUser->location;
+
+		// Get all users sorted by distance from the current user
+		$users = User::query()->orderByDistance('location', $currentLocation)
+			->limit(50)
+			->pluck('id')
+			->toArray();
+
 		return view('home')->with('users', $users);
 	}
 }

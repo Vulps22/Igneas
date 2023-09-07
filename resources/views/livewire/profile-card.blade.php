@@ -7,6 +7,7 @@
 	<div class="flex bg-gradient-to-t from-gray-900 to-transparent w-full h-full">
 		<div class="self-end w-full h-1/4 pl-3">
 			<h3><span class="w-2/3">{{ $profile->display_name }}</span> | {{ $profile->age() }}</h3>
+			<h4> {{ $user->distance(auth()->user()->location) }} km away</h4>
 		</div>
 	</div>
 </div>

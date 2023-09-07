@@ -78,4 +78,21 @@ class User extends Authenticatable
 		//order by position low to high
 		return $this->hasMany(UserImage::class)->orderBy('position', 'asc');
 	}
+
+	public function distance(Point $point)
+	{
+		//calculate the distance between the user and a given point
+		$distance = User::query()->where('id', '=', $this->id)->withDistance('location', $point)->find($this->id)->distance;
+
+		//turn this into km
+		if($distance > 1000){
+		$distance = round($distance / 1000, 2);
+		return $distance . " km";
+		}
+		else {
+			$distance = round($distance, 2);
+			return $distance . " m";
+		}
+
+	}
 }

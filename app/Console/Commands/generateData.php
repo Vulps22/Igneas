@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Models\UserHealth;
+use App\Models\UserImage;
 use App\Models\UserProfile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
@@ -82,7 +83,16 @@ class generateData extends Command
 				'on_prep' => rand(0, 1),
 				'show_hiv_status' => rand(0, 1),
 			]);
+
+			// create user images
+			for ($j = 0; $j < 6; $j++) {
+				UserImage::create([
+					'user_id' => $user->id,
+					'position' => $j,
+				]);
+			}
 		}
+
 
 		$this->info('Dummy data generated successfully!');
 	}
