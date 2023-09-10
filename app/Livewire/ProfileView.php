@@ -35,8 +35,10 @@ class ProfileView extends Component
 		$this->health = $this->user->health;
 
 		foreach ($photos as $photo) {
-			$this->photos[] = Storage::url($photo->filename);
+			if($photo->filename && Storage::exists($photo->filename)) $this->photos[] = Storage::url($photo->filename);
 		}
+
+		if(!$this->photos) $this->photos[] = Storage::url('images/default.png');
 
 		$this->selectedImage = $this->photos[0];
 	}
@@ -63,6 +65,7 @@ class ProfileView extends Component
 
 	public function getLastTestString()
 	{
+		if(!$this->health->show_last_STI_test) return '';
 		return $this->health->last_STI_test->format('d/m/Y');
 	}
 

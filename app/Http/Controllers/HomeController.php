@@ -27,12 +27,30 @@ class HomeController extends Controller
 		// Get the current user's location
 		$currentUser = auth()->user();
 		$currentLocation = $currentUser->location;
+		$users = null;
+		if (!$currentLocation) {
+			//get the users unfiltered
+			$currentUser = auth()->user(); // get the current user
+			$users = User::query()
+				->where('id', '<>', $currentUser->id)
+				->limit(50)
+				->pluck('id')
+				->toArray();
+		}
 
-		// Get all users sorted by distance from the current user
-		$users = User::query()->orderByDistance('location', $currentLocation)
-			->limit(50)
-			->pluck('id')
-			->toArray();
+		if ($currentLocation) {
+			// Get all users sorted by distance from the current user
+			$users = User::query()
+				->where('id', '<>', $currentUser->id)
+				->orderByDistance('location', $currentLocation)
+				->limit(50)
+				->pluck('id')
+				->toArray();
+		}
+
+		if (!$users) {
+			$users = [];
+		}
 
 		return view('home')->with('users', $users);
 	}

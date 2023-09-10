@@ -25,10 +25,10 @@
 </head>
 
 <body class="bg-neutral-900 text-white h-screen">
-	<div id="app">
+	<div id="app" class="h-full">
 		@include('components.navbar')
 
-		<main class="pt-4">
+		<main class="pt-4 overflow-y-auto scrollbar hooky-scrollbar" style="height: 94.5vh;">
 			@yield('content')
 		</main>
 	</div>
