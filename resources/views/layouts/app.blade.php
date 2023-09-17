@@ -15,10 +15,15 @@
 	<link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
 	<!-- Scripts -->
-	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script src="https://kit.fontawesome.com/ac7deee7ba.js" crossorigin="anonymous"></script>
+	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js', 'resources/js/bootstrap.js'])
 	@livewireScripts
 	@stack('scripts')
-	<script src="https://kit.fontawesome.com/ac7deee7ba.js" crossorigin="anonymous"></script>
+
+
+
+	<script type="module" src="/js/global.js"></script>
 
 	<!-- Styles -->
 	@livewireStyles

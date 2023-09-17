@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class UserProfile extends Model
 {
@@ -51,6 +52,13 @@ class UserProfile extends Model
 		return $this->user->images()->first();
 	}
 
+	public function primaryImageURL()
+	{
+		$filename = $this->user->images()->first()->filename;
+		if($filename && Storage::exists($filename)) return Storage::url($filename);
+		return Storage::url('images/default.png');;
+	}
+
 	public function addImage($filename, $position = null)
 	{
 		if($this->images()->count() > 6) return false;
@@ -66,7 +74,9 @@ class UserProfile extends Model
 
 	public function age()
 	{
-		return $this->user->age();
+		if($this->show_age) return $this->user->age();
+
+		return '';
 	}
 
 }

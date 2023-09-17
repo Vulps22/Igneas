@@ -79,20 +79,32 @@ class User extends Authenticatable
 		return $this->hasMany(UserImage::class)->orderBy('position', 'asc');
 	}
 
+	public function profile_picture()
+	{
+		//return the first image in the collection
+		return $this->hasOne(UserImage::class)->where('position', '=', 0);
+	}
+
 	public function distance(Point $point)
 	{
 		//calculate the distance between the user and a given point
 		$distance = User::query()->where('id', '=', $this->id)->withDistance('location', $point)->find($this->id)->distance;
 
 		//turn this into km
-		if($distance > 1000){
-		$distance = round($distance / 1000, 2);
-		return $distance . " km";
-		}
-		else {
+		if ($distance > 1000) {
+			$distance = round($distance / 1000, 2);
+			return $distance . " km";
+		} else {
 			$distance = round($distance, 2);
 			return $distance . " m";
 		}
+	}
 
+	/**
+	 * The conversations that the user is a part of.
+	 */
+	public function conversations()
+	{
+		return $this->hasMany(UserConversation::class, 'user_one')->orWhere('user_two', $this->id);
 	}
 }

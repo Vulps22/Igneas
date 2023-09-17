@@ -35,6 +35,10 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/profile', ProfileEditor::class)->name('profile.editor');
 Route::get('/profile/{userId}', ProfileView::class)->name('profile.view');
 
+Route::get('/messenger', 'App\Http\Controllers\MessengerController@index')->name('messenger');
+Route::get('/messenger/{userId}', 'App\Http\Controllers\MessengerController@index')->name('conversation');
+Route::post('messenger/send', 'App\Http\Controllers\MessengerController@createMessage')->name('send.message');
+
 //userController routes
 Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location');
 Route::post('/save_user_profile', 'App\Http\Controllers\UserController@save_user_profile')->name('profile.save');

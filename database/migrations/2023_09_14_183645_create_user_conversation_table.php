@@ -11,12 +11,10 @@ return new class extends Migration
 	 */
 	public function up(): void
 	{
-		Schema::create('user_images', function (Blueprint $table) {
+		Schema::create('user_conversation', function (Blueprint $table) {
 			$table->id();
-			$table->unsignedBigInteger('user_id');
-			$table->string('filename')->default('');
-			$table->integer('position')->default(0);
-			$table->boolean('is_message')->default(false);
+			$table->integer('user_one');
+			$table->integer('user_two');
 			$table->timestamps();
 		});
 	}
@@ -26,6 +24,6 @@ return new class extends Migration
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('user_images');
+		Schema::dropIfExists('conversation');
 	}
 };

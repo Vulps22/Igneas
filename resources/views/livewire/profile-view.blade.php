@@ -20,7 +20,7 @@
 	@endif
 
 	<div class="rounded-lg border-2 border-neutral-800 mt-10 p-10 w-2/3">
-		<div class="mt-2 p-2 mb-5 border-b-2 border-neutral-800">
+		<div class="relative mt-2 p-2 mb-5 border-b-2 border-neutral-800">
 			<h1 class="text-3xl font-bold">
 				{{ $profile->display_name }}
 				@if($profile->show_age)
@@ -33,6 +33,9 @@
 			<h3 class="text-2xl text-italic capitalize">
 				{{ $profile->pronouns }}
 			</h3>
+			<div class="absolute top-0 right-0">
+				<a href="/messenger/{{$user->id}}" class="text-neutral-300 hover:text-red-500 hover:bg-neutral-300 rounded p-3"><i class="fa-regular fa-comment text-2xl"></i> </a>
+			</div>
 		</div>
 
 		<h3 class="mt-2 p-2 w-1/2 mx-auto text-2xl text-neutral-300">About Me</h3>
