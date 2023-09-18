@@ -1,4 +1,32 @@
 
+//when doument is ready get messages
+
+$(document).ready(function () {
+	getMessages();
+});
+
+function getMessages() {
+	var conversationId = document.getElementById('message-form').getAttribute('data-conversation-id');
+	var senderId = document.getElementById('message-form').getAttribute('data-sender-id');
+
+	$.ajaxSetup({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		}
+	});
+	$.ajax({
+		url: '/messenger/' + conversationId + '/messages',
+		type: 'GET',
+		success: function (response) {
+			// Update the message list with the new message
+			updateMessageList(response.messages, senderId);
+		},
+		error: function (xhr, status, error) {
+			console.error(error);
+		},
+	});
+}
+
 // Send a new message when the form is submitted
 function handleSubmit(event) {
 	event.preventDefault();
@@ -28,7 +56,7 @@ function sendMessage(conversationId, senderId, text) {
 		},
 		success: function (response) {
 			// Update the message list with the new message
-			updateMessageList(response.messages);
+			updateMessageList(response.messages, senderId);
 		},
 		error: function (xhr, status, error) {
 			console.error(error);
@@ -36,12 +64,38 @@ function sendMessage(conversationId, senderId, text) {
 	});
 }
 
-// Update the message list with the new messages
-function updateMessageList(messages) {
+function updateMessageList(messages, senderId) {
 	var messageList = $('.message-list');
 	messageList.empty();
 	messages.forEach(function (message) {
-		var messageElement = $('<div>').addClass('message').text(message.text);
+		var messageElement;
+		if (message.sender_id == senderId) {
+			messageElement = userMessage(message);
+		} else {
+			messageElement = recipientMessage(message);
+		}
 		messageList.append(messageElement);
 	});
+}
+
+
+function userMessage(message) {
+	var messageBubble = document.createElement('div');
+	messageBubble.classList.add('flex', 'justify-end');
+	var innerBubble = document.createElement('div');
+	innerBubble.classList.add('bg-blue-500', 'text-white', 'rounded-lg', 'px-4', 'py-2', 'max-w-xs', 'break-words', 'my-2');
+	innerBubble.innerHTML = message.text;
+	messageBubble.appendChild(innerBubble);
+	return messageBubble;
+}
+
+function recipientMessage(message) {
+	var messageBubble = document.createElement('div');
+	messageBubble.classList.add('flex', 'justify-start');
+	var innerBubble = document.createElement('div');
+	innerBubble.classList.add('text-white', 'rounded-lg', 'px-4', 'py-2', 'max-w-xs', 'break-words', 'my-2');
+	innerBubble.style.backgroundColor = 'rgb(127 29 29)';
+	innerBubble.innerHTML = message.text;
+	messageBubble.appendChild(innerBubble);
+	return messageBubble;
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\UserConversation;
 
 class Message extends Model
 {
@@ -18,9 +19,9 @@ class Message extends Model
 		'image_id',
 	];
 
-	public function conversation()
+	public function conversation(): UserConversation
 	{
-		return $this->belongsTo(Conversation::class, 'conversation_id');
+		return UserConversation::find($this->user_conversation_id);
 	}
 
 	public function sender()

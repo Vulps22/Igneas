@@ -38,6 +38,7 @@ Route::get('/profile/{userId}', ProfileView::class)->name('profile.view');
 Route::get('/messenger', 'App\Http\Controllers\MessengerController@index')->name('messenger');
 Route::get('/messenger/{userId}', 'App\Http\Controllers\MessengerController@index')->name('conversation');
 Route::post('messenger/send', 'App\Http\Controllers\MessengerController@createMessage')->name('send.message');
+Route::get('messenger/{conversation_id}/messages', 'App\Http\Controllers\MessengerController@getMessages')->name('get.messages');
 
 //userController routes
 Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location');

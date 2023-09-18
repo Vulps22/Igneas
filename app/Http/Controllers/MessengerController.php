@@ -10,6 +10,7 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\Component;
 
 class MessengerController extends Controller
@@ -44,7 +45,7 @@ class MessengerController extends Controller
 		$conversation = $this->user->conversations;
 
 		if ($conversation->count() === 0) return $conversations;
-
+		
 		foreach ($conversation as $convo) {
 			$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
 			$conversations[] = [
@@ -80,10 +81,7 @@ class MessengerController extends Controller
 	public function createMessage(Request $request)
 	{
 
-		if(!Auth::check()) abort(401, 'Not Authorised.');
-		$convo = UserConversation::find($request->conversation_id);
-		if(!$convo) abort(404, 'Conversation not found.');
-		if($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
+		$this->authorise($request);
 
 		//create a new message
 		$message = Message::create([
@@ -101,9 +99,22 @@ class MessengerController extends Controller
 
 	public function getMessages(Request $request)
 	{
+		$this->authorise($request);
+
 		//get the messages for the conversation
 		$messages = Message::where('user_conversation_id', $request->conversation_id)->get();
 
-		return $messages;
+		return ['messages' => $messages];
+	}
+
+	/**
+	 * Authorise the user to perform the action by validating they have access to the conversation and are logged in
+	 */
+	private function authorise(Request $request){
+		if(!Auth::check()) abort(401, 'Not Authorised.');
+		$convo = UserConversation::find($request->conversation_id);
+		if(!$convo) abort(404, 'Conversation not found.');
+		if($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
+		return true;
 	}
 }

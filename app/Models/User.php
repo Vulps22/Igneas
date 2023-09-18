@@ -85,8 +85,9 @@ class User extends Authenticatable
 		return $this->hasOne(UserImage::class)->where('position', '=', 0);
 	}
 
-	public function distance(Point $point)
+	public function distance(Point $point = null)
 	{
+		if(!$point) return "0m";
 		//calculate the distance between the user and a given point
 		$distance = User::query()->where('id', '=', $this->id)->withDistance('location', $point)->find($this->id)->distance;
 

@@ -1,5 +1,5 @@
 <div class="h-full w-full flex flex-col justify-end">
-	<div class="flex-1">
+	<div class="flex-1 message-list">
 
 	</div>
 	<div class="flex-none p-4">
