@@ -39,8 +39,13 @@ Route::get('/messenger', 'App\Http\Controllers\MessengerController@index')->name
 Route::get('/messenger/{userId}', 'App\Http\Controllers\MessengerController@index')->name('conversation');
 Route::post('messenger/send', 'App\Http\Controllers\MessengerController@createMessage')->name('send.message');
 Route::get('messenger/{conversation_id}/messages', 'App\Http\Controllers\MessengerController@getMessages')->name('get.messages');
+Route::get('messenger/find/{conversationId}', 'App\Http\Controllers\MessengerController@getConversation')->name('get.conversation');
 
 //userController routes
 Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location');
 Route::post('/save_user_profile', 'App\Http\Controllers\UserController@save_user_profile')->name('profile.save');
 
+Route::post('/components/{component}', function ($component) {
+	$data = json_decode(request()->getContent(), true);
+	return view('components.' . $component, $data)->render();
+});

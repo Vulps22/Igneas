@@ -5,17 +5,16 @@ namespace App\Http\Controllers;
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
+use App\Models\User;
 use App\Models\UserConversation;
-use Closure;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\View\Component;
+
 
 class MessengerController extends Controller
 {
 	public $user;
+	private $selectedConversationId;
 	/**
 	 * Create a new component instance.
 	 */
@@ -29,13 +28,14 @@ class MessengerController extends Controller
 		if (!auth()->check()) return redirect()->route('login');
 
 		$this->user = auth()->user();
-		$conversations = $this->getConversations();
-		$selectedConversation = null;
+		
+		$this->selectedConversationId = null;
 		if ($userId) {
-			$selectedConversation = $this->getConversation($userId);
+			$this->selectedConversationId = $this->getConversationId($userId);
 		}
+		$conversations = $this->getConversations();
 
-		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $selectedConversation]);
+		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $this->selectedConversationId]);
 	}
 
 
@@ -48,10 +48,13 @@ class MessengerController extends Controller
 		
 		foreach ($conversation as $convo) {
 			$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
+			$latest = $convo->messages()->where('user_conversation_id', $convo->id)->latest()->first();
+			if(!$latest && $convo->id !== $this->selectedConversationId) continue;
+
 			$conversations[] = [
 				'id' => $convo->id,
 				'user' => $user,
-				'latest' => $convo->messages()->where('user_conversation_id', $convo->id)->latest()->first()
+				'latest' => $latest
 			];
 		}
 
@@ -59,9 +62,9 @@ class MessengerController extends Controller
 	}
 
 	/**
-	 * get the specific conversation between the user and the other user
+	 * get the specific conversation id between the user and the other user
 	 */
-	public function getConversation($userId)
+	public function getConversationId($userId)
 	{
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
@@ -74,6 +77,46 @@ class MessengerController extends Controller
 				'user_two' => $userId
 			]);
 		}
+
+
+		return $conversation->id;
+	}
+
+	/**
+	 * get the specific conversation id between the user and the other user
+	 * used to update the conversation list when a new conversation is started by another user
+	 */
+	public function getConversation(Request $request)
+	{
+		//$request->conversationId is the id of the conversation you're searching for
+		// if the conversation doesn't exist, something happened that shouldn't have... do nothing
+		// verify the authenticated user is one of the conversation's users
+
+		$user_id = Auth::user()->id;
+
+		$conversation = UserConversation::find($request->conversationId);
+		if (!$conversation) return null;
+		if ($conversation->user_one !== $user_id && $conversation->user_two !== $user_id) abort(403, 'Unauthorized action.');
+
+		$userProfile = $conversation->users()[0]->id === $user_id ? $conversation->users()[1]->profile : $conversation->users()[0]->profile;
+		$userId = $userProfile->user->id;
+		$userImage = $userProfile->primaryImageURL();
+		$userName = $userProfile->display_name;
+		$userAge = $userProfile->age();
+
+
+		$user = [
+			'id' => $userId,
+			'name' => $userName,
+			'age' => $userAge,
+			'image' => $userImage,
+		];
+
+		$conversation = [
+			'id' => $conversation->id,
+			'user' => $user,
+			'latest' => $conversation->messages()->where('user_conversation_id', $conversation->id)->latest()->first()
+		];
 
 		return $conversation;
 	}
@@ -94,7 +137,7 @@ class MessengerController extends Controller
 		//broadcast the message
 		broadcast(new MessageSent($message))->toOthers();
 
-		return ['status' => 'Message Sent!', 'messages' => $this->getMessages($request)];
+		return ['status' => 'Message Sent!', 'messages' => $message];
 	}
 
 	public function getMessages(Request $request)

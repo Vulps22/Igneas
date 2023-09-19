@@ -11,11 +11,6 @@ body {
 	width: 12px;
 }
 
-.hooku-scrollbar::-webkit-scrollbar-track {
-	background-color: #f5f5f5;
-	border-radius: 10px;
-}
-
 .hooky-scrollbar::-webkit-scrollbar-thumb {
 	border-radius: 10px;
 	background-color: #dcdcdc;

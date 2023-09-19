@@ -4,23 +4,20 @@
 @endpush
 @section('content')
 <div class="flex h-full">
-	<div class="w-1/4 border-r">
+	<div id="conversation-list" class="w-1/4 border-r">
 		@if(count($conversations) == 0)
-		<p class="ml-52 pt-10">You have no conversations.</p>
+		<p id="noConvo" class="ml-52 pt-10">You have no conversations.</p>
 		@else
 		@foreach ($conversations as $conversation)
-		<a href="/messenger/{{$conversation['user']->id }}" class="block hover:bg-gray-100">
-			<x-conversation-list-item :conversation-id="$conversation['id']" :user="$conversation['user']" :latest-message="$conversation['latest']->text" />
-		</a>
+		<div id="conversation{{$conversation['id']}}" class="block hover:bg-gray-100 conversation" onclick="selectConversation('<?= $conversation['id']; ?>')">
+			<x-conversation-list-item :conversation-id="$conversation['id']" :user="$conversation['user']" :latest-message="$conversation['latest'] ? $conversation['latest']->text : ''" />
+		</div>
 		@endforeach
 		@endif
 	</div>
 	<div class="w-3/4 p-4">
-		@if ($selectedConversation)
-		<x-conversation :conversation-id="$selectedConversation->id" />
-		@else
-		<p>Select a conversation to view messages.</p>
-		@endif
+		<x-conversation :conversationId="$selectedConversation" />
+		
 	</div>
 </div>
 @endsection

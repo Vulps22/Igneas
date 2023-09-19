@@ -37,3 +37,21 @@ app.component('example-component', ExampleComponent);
  */
 
 app.mount('#app');
+
+
+function getComponent(componentName, data, callback) {
+	const xhr = new XMLHttpRequest();
+	xhr.open('POST', '/components/' + componentName);
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.onload = () => {
+		if (xhr.status === 200) {
+			callback(xhr.responseText);
+		} else {
+			console.error('Error getting component:', xhr.statusText);
+		}
+	};
+	xhr.onerror = () => {
+		console.error('Error getting component:', xhr.statusText);
+	};
+	xhr.send(JSON.stringify(data));
+}

@@ -10,18 +10,14 @@ use App\Models\UserConversation;
 class conversation extends Component
 {
 
-	public $messages;
-	public $conversation;
-	public $userId;
+	public $conversationId;
 
 	/**
 	 * Create a new component instance.
 	 */
-	public function __construct(public int $conversationId)
+	public function __construct($conversationId)
 	{
-		$this->conversation = UserConversation::find($conversationId);
-		$this->messages = $this->conversation->messages()->orderBy('created_at', 'asc')->get();
-		$this->userId = auth()->user()->id;
+		$this->conversationId = $conversationId;
 	}
 
 	/**

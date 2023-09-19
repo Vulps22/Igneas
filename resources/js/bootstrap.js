@@ -35,12 +35,12 @@ try {
 
 // Listen for all events on the user's channel
 if (window.user) {
-	console.log("Listening to", `conversation.user.${window.user}`);
 	window.Echo.private(`conversation.user.${window.user}`)
 		.listen('MessageSent', (event) => {
-			console.log(event);
-			console.log('Received event:', event);
 			const audio = new Audio('/sounds/messenger.mp3');
 			audio.play();
 		});
+	if (typeof initMessenger === 'function') {
+		initMessenger();
+	}
 }
