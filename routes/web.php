@@ -24,11 +24,11 @@ Route::get('/', function () {
 Auth::routes([
 	'register' => false,
 	'login' => false,
-	'logout' => false,
 ]);
 
 //Unauthorised routes
-Route::post('/login', 'App\Http\Controllers\Auth\LoginController@login')->name('login');
+Route::get('/login', 'App\Http\Controllers\Auth\LoginController@index')->name('login');
+Route::post('/login/go', 'App\Http\Controllers\Auth\LoginController@login');
 Route::post('/register', 'App\Http\Controllers\Auth\RegisterController@create')->name('register');
 Route::get('/logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('logout');
 
@@ -37,6 +37,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/profile', ProfileEditor::class)->name('profile.editor');
 Route::get('/profile/{userId}', ProfileView::class)->name('profile.view');
 
+//messenger routes
 Route::get('/messenger', 'App\Http\Controllers\MessengerController@index')->name('messenger');
 Route::get('/messenger/{userId}', 'App\Http\Controllers\MessengerController@index')->name('conversation');
 Route::post('messenger/send', 'App\Http\Controllers\MessengerController@createMessage')->name('send.message');

@@ -56,4 +56,8 @@ class LoginController extends Controller
 		auth()->logout();
 		return redirect('/');
 	}
+
+	public function index() {
+		return view('auth.login');
+	}
 }
