@@ -23,6 +23,8 @@ Route::get('/', function () {
 
 Auth::routes([
 	'register' => false,
+	'login' => false,
+	'logout' => false,
 ]);
 
 //Unauthorised routes
