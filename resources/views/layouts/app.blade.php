@@ -17,7 +17,7 @@
 	<!-- Scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/ac7deee7ba.js" crossorigin="anonymous"></script>
-	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js'])
+	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js', 'resources/js/geolocation.js'])
 	@livewireScripts
 	@stack('scripts')
 
@@ -43,39 +43,6 @@
 			@yield('content')
 		</main>
 	</div>
-	@if(Auth::check())
-	<script>
-		document.addEventListener('DOMContentLoaded', function() {
-			if (window.location.pathname === '/home') {
-				if (navigator.geolocation) {
-					navigator.geolocation.getCurrentPosition(function(position) {
-						var latitude = position.coords.latitude;
-						var longitude = position.coords.longitude;
-						console.log(latitude, longitude);
-						// Send the latitude and longitude to the backend using AJAX
-						var xhr = new XMLHttpRequest();
-						xhr.open('POST', '/set_user_location');
-						xhr.setRequestHeader('Content-Type', 'application/json');
-						xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-
-						//handle response
-						xhr.onload = function() {
-							if (xhr.status === 401) window.location.href = '/login';
-						};
-
-						//send request
-						xhr.send(JSON.stringify({
-							user: "{{ Auth::user()->id }}",
-							latitude: latitude,
-							longitude: longitude
-						}));
-
-					});
-				}
-			}
-		});
-	</script>
-	@endif
 </body>
 
 </html>

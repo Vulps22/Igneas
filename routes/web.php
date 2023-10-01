@@ -29,7 +29,7 @@ Auth::routes([
 
 //Unauthorised routes
 Route::get('/login', 'App\Http\Controllers\Auth\LoginController@index')->name('login');
-Route::post('/login/go', 'App\Http\Controllers\Auth\LoginController@login');
+Route::post('/login', 'App\Http\Controllers\Auth\LoginController@login');
 Route::post('/register', 'App\Http\Controllers\Auth\RegisterController@create')->name('register');
 Route::get('/logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('logout');
 
