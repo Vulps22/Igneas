@@ -27,7 +27,7 @@
 
 	@auth
 	<script>
-		window.user = {!! json_encode(Auth::user()->id) !!};
+		window.user = {!! json_encode(Auth::user()->id); !!};
 	</script>
 	@endauth
 
