@@ -1,0 +1,55 @@
+name: Deploy to Ubuntu Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0' # Adjust the PHP version as needed
+
+      - name: Install Composer Dependencies
+        run: composer install --no-interaction --no-ansi --no-progress --prefer-dist
+
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # Adjust the Node.js version as needed
+
+      - name: Install Node.js Dependencies
+        run: npm ci
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Upload Project to Ubuntu Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          local: ./ # Path to your project root
+          remote: /var/www/html/Smashr # Adjust this to your server's path
+
+      - name: SSH into Ubuntu Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd /var/www/html/Smashr # Adjust this to your server's path
+            npm install
+            composer install
+            php artisan optimize:clear
+            php artisan optimize:cache
