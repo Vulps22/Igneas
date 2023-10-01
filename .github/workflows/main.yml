@@ -45,4 +45,4 @@ jobs:
 
 
       - name: Install dependencies on server and reload
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && npm install --production && composer install && php artisan optimize:clear && php artisan optimize:cache'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && npm install --production && composer install && php artisan optimize:clear && php artisan optimize'
