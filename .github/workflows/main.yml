@@ -41,7 +41,8 @@ jobs:
 
       - name: Upload Project to Ubuntu Server
         run: |
-          scp -r -i ~/.ssh/id_rsa ./* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/var/www/html/Smashr
+         rsync -e "ssh -i ~/.ssh/id_rsa" -av --exclude=node_modules --exclude=vendor ./ ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/var/www/html/Smashr
+
 
       - name: Install dependencies on server and reload
         run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && npm install --production && composer install && php artisan optimize:clear && php artisan optimize:cache'
