@@ -112,9 +112,14 @@ class User extends Authenticatable
 	}
 
 	private function deg2meters($distanceDeg) {
+		/*
 		$R = 6378137;
 		
 		$rad = $distanceDeg * pi() / 180;
 		return $rad * $R;
+		*/
+
+		return $distanceDeg * 111139;
+
 	  }
 }
