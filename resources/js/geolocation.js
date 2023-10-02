@@ -17,14 +17,13 @@ export default function initGeoLocation() {
 				xhr.onload = function () {
 					if (xhr.status === 401) window.location.href = '/login';
 				};
-
+				console.log(window.user);
 				//send request
 				xhr.send(JSON.stringify({
-					user: window.user.id,
+					user: window.user,
 					latitude: latitude,
 					longitude: longitude
 				}));
-
 			});
 		}
 	}
