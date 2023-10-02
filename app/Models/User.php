@@ -119,7 +119,7 @@ class User extends Authenticatable
 		return $rad * $R;
 		*/
 
-		return $distanceDeg * 111139;
+		return $distanceDeg * 111200;
 
 	  }
 }
