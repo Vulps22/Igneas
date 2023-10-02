@@ -112,6 +112,7 @@ class User extends Authenticatable
 	}
 
 	private function deg2meters($distanceDeg) {
+		dump($distanceDeg);
 		/*
 		$R = 6378137;
 		
