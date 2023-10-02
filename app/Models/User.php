@@ -91,6 +91,8 @@ class User extends Authenticatable
 		//calculate the distance between the user and a given point
 		$distance = User::query()->where('id', '=', $this->id)->withDistance('location', $point)->find($this->id)->distance;
 
+		$distance = $this->deg2meters($distance);
+
 		//turn this into km
 		if ($distance > 1000) {
 			$distance = round($distance / 1000, 2);
@@ -108,4 +110,11 @@ class User extends Authenticatable
 	{
 		return $this->hasMany(UserConversation::class, 'user_one')->orWhere('user_two', $this->id);
 	}
+
+	private function deg2meters($distanceDeg) {
+		$R = 6378137;
+		
+		$rad = $distanceDeg * pi() / 180;
+		return $rad * $R;
+	  }
 }
