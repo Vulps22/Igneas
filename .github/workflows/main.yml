@@ -40,7 +40,7 @@ jobs:
           if_key_exists: replace
 
       - name: Upload Project to Ubuntu Server
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && git pull origin main'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && eval "$(ssh-agent -s)" && ssh-add ~/.ssh/github-login && git pull origin main'
          
       - name: Install dependencies on server
         run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && npm install && composer install && npm run build'
