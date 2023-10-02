@@ -11,7 +11,7 @@ export default function initGeoLocation() {
 				var xhr = new XMLHttpRequest();
 				xhr.open('POST', '/set_user_location');
 				xhr.setRequestHeader('Content-Type', 'application/json');
-				xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+				xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
 
 				//handle response
 				xhr.onload = function () {
