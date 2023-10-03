@@ -112,11 +112,11 @@ class User extends Authenticatable
 	{
 		return $this->hasMany(UserConversation::class, 'user_one')->orWhere('user_two', $this->id);
 	}
-
+/*
 	65*2*3.14
 
 	circ 2pi r
-
+*/
 	private function deg2meters($distanceDeg) {
 		$R = 6378137;
 		
