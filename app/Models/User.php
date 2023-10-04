@@ -87,7 +87,7 @@ class User extends Authenticatable
 
 	public function distance(Point $point = null)
 	{
-		if (!$point) return "0m";
+		if (!$point) return "";
 
 		$userLoc = $this->location;
 		$userLong = $userLoc->longitude;
@@ -98,19 +98,10 @@ class User extends Authenticatable
 
 		$distance = $this->distanceBetween($userLat, $userLong, $pointLat, $pointLong, "K");
 
-		return $distance;
-/*
-		$distance = $this->deg2meters($distance);
+		if($distance < 1) return "< 1km";
 
-		//turn this into km
-		if ($distance > 1000) {
-			$distance = round($distance / 1000, 2);
-			return $distance . " km";
-		} else {
-			$distance = round($distance, 2);
-			return $distance . " m";
-		}
-		*/
+		return $distance . "km";
+
 	}
 
 	/**
@@ -120,20 +111,16 @@ class User extends Authenticatable
 	{
 		return $this->hasMany(UserConversation::class, 'user_one')->orWhere('user_two', $this->id);
 	}
-	/*
-	65*2*3.14
 
-	circ 2pi r
-*/
-	private function deg2meters($distanceDeg)
-	{
-		$R = 6378137;
-
-		$rad = $distanceDeg * pi() / 180;
-		return $rad * $R;
-	}
-
-
+	/**
+	 * Calculate the distance in km between two points
+	 * @param float $lat1 Latitude of point 1
+	 * @param float $lon1 Longitude of point 1
+	 * @param float $lat2 Latitude of point 2
+	 * @param float $lon2 Longitude of point 2
+	 * @param string $unit Unit of distance (K = kilometers, N = nautical miles, M = miles)
+	 * @return float Distance between points in the specified unit
+	 */
 	function distanceBetween($lat1, $lon1, $lat2, $lon2, $unit) {
 
 		$theta = $lon1 - $lon2;
