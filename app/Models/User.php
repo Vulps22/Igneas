@@ -96,7 +96,7 @@ class User extends Authenticatable
 		$pointLong = $point->longitude;
 		$pointLat = $point->latitude;
 
-		$distance = $this->haversine_distance($userLat, $userLong, $pointLat, $pointLong);
+		$distance = $this->distanceBetween($userLat, $userLong, $pointLat, $pointLong, "K");
 
 		return $distance;
 /*
@@ -134,29 +134,21 @@ class User extends Authenticatable
 	}
 
 
-	/**
-	 * Outputs the distance between two points in kilometers.
-	 */
-	function haversine_distance($lat1, $lon1, $lat2, $lon2)
-	{
-		// Radius of the Earth in kilometers
-		$R = 6371.0;
+	function distanceBetween($lat1, $lon1, $lat2, $lon2, $unit) {
 
-		// Convert latitude and longitude from degrees to radians
-		$lat1 = deg2rad($lat1);
-		$lon1 = deg2rad($lon1);
-		$lat2 = deg2rad($lat2);
-		$lon2 = deg2rad($lon2);
-
-		// Haversine formula
-		$dlon = $lon2 - $lon1;
-		$dlat = $lat2 - $lat1;
-		$a = (sin($dlat / 2) * 2) + cos($lat1) * cos($lat2) * (sin($dlon / 2) * 2);
-		$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-		// Calculate the distance
-		$distance = $R * $c;
-
-		return $distance;
-	}
+		$theta = $lon1 - $lon2;
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+		$dist = acos($dist);
+		$dist = rad2deg($dist);
+		$miles = $dist * 60 * 1.1515;
+		$unit = strtoupper($unit);
+	  
+		if ($unit == "K") {
+		  return ($miles * 1.609344);
+		} else if ($unit == "N") {
+			return ($miles * 0.8684);
+		  } else {
+			  return $miles;
+			}
+	  }
 }
