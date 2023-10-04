@@ -87,12 +87,19 @@ class User extends Authenticatable
 
 	public function distance(Point $point = null)
 	{
-		if(!$point) return "0m";
-		//calculate the distance between the user and a given point
-		$distance = User::query()->where('id', '=', $this->id)->withDistance('location', $point)->find($this->id)->distance;
+		if (!$point) return "0m";
+
+		$userLoc = $this->location;
+		$userLong = $userLoc->longitude;
+		$userLat = $userLoc->latitude;
+		
+		$pointLong = $point->longitude;
+		$pointLat = $point->latitude;
+
+		$distance = $this->haversine_distance($userLat, $userLong, $pointLat, $pointLong);
 
 		return $distance;
-
+/*
 		$distance = $this->deg2meters($distance);
 
 		//turn this into km
@@ -103,6 +110,7 @@ class User extends Authenticatable
 			$distance = round($distance, 2);
 			return $distance . " m";
 		}
+		*/
 	}
 
 	/**
@@ -112,15 +120,43 @@ class User extends Authenticatable
 	{
 		return $this->hasMany(UserConversation::class, 'user_one')->orWhere('user_two', $this->id);
 	}
-/*
+	/*
 	65*2*3.14
 
 	circ 2pi r
 */
-	private function deg2meters($distanceDeg) {
+	private function deg2meters($distanceDeg)
+	{
 		$R = 6378137;
-		
+
 		$rad = $distanceDeg * pi() / 180;
 		return $rad * $R;
-	  }
+	}
+
+
+	/**
+	 * Outputs the distance between two points in kilometers.
+	 */
+	function haversine_distance($lat1, $lon1, $lat2, $lon2)
+	{
+		// Radius of the Earth in kilometers
+		$R = 6371.0;
+
+		// Convert latitude and longitude from degrees to radians
+		$lat1 = deg2rad($lat1);
+		$lon1 = deg2rad($lon1);
+		$lat2 = deg2rad($lat2);
+		$lon2 = deg2rad($lon2);
+
+		// Haversine formula
+		$dlon = $lon2 - $lon1;
+		$dlat = $lat2 - $lat1;
+		$a = (sin($dlat / 2) * 2) + cos($lat1) * cos($lat2) * (sin($dlon / 2) * 2);
+		$c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+		// Calculate the distance
+		$distance = $R * $c;
+
+		return $distance;
+	}
 }
