@@ -100,7 +100,7 @@ class User extends Authenticatable
 
 		if($distance < 1) return "< 1km";
 
-		return $distance . "km";
+		return round($distance, 2) . "km";
 
 	}
 
