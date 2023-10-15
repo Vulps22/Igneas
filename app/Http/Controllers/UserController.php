@@ -101,7 +101,7 @@ class UserController extends Controller
 
 		$imageModel->filename = $name;
 		$url = Storage::url($name);
-		dump("Generated URL: $url");
+		//dump("Generated URL: $url");
 		$imageModel->save();
 
 		return response(json_encode(['url' => $url, 'position' => $position]), 200);
