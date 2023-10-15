@@ -27,11 +27,13 @@ class UserImage extends Model
 		return $this->user()->profile();
 	}
 
-	public function imagePath(){
-		if($this->filename) return "public/images/{$this->filename}";
+	public function imagePath()
+	{
+		if ($this->filename) return "public/images/{$this->filename}";
 	}
 
-	public function imageURL(){
-		if($this->filename) return "/images/{$this->filename}";
+	public function imageURL()
+	{
+		if ($this->filename) return "/images/{$this->filename}";
 	}
 }

@@ -121,12 +121,11 @@ class UserController extends Controller
 
 		$imageModel = $user->images[$position];
 		$filename = $imageModel->filename;
-		if(!$filename) return response('File Not Found', 404);
+		if (!$filename) return response('File Not Found', 404);
 		Storage::delete("public/images/$filename");
 		$imageModel->filename = '';
 		$imageModel->save();
 
 		return response(json_encode(["position" => $position]));
-		
 	}
 }
