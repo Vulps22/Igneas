@@ -35,7 +35,7 @@ class ProfileView extends Component
 		$this->health = $this->user->health;
 
 		foreach ($photos as $photo) {
-			if ($photo->filename && Storage::exists($photo->filename)) $this->photos[] = Storage::url($photo->filename);
+			if ($photo->filename && Storage::exists($photo->imagePath())) $this->photos[] = Storage::url($photo->imagePath());
 		}
 
 		if (!$this->photos) $this->photos[] = Storage::url('images/default.png');
