@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('scripts')
+<script type="text/javascript" src="/js/photomanager.js"></script>
+@endpush
+
 @section('content')
 
 <form action="{{ route('profile.save') }}" method="POST">
@@ -25,7 +29,7 @@
 
 					<!-- Profile image uploader -->
 					<div class="grid grid-cols-3 gap-4 mt-5">
-						@for ($i = 0; $i < 6; $i++) <livewire:photo-card :position="$i" />
+						@for ($i = 0; $i < 6; $i++) <x-profile-editor-photo-card :position="$i" />
 						@endfor
 					</div>
 				</div>
