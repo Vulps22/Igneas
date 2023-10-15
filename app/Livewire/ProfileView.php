@@ -35,7 +35,8 @@ class ProfileView extends Component
 		$this->health = $this->user->health;
 
 		foreach ($photos as $photo) {
-			if ($photo->filename && Storage::exists($photo->filename)) $this->photos[] = Storage::url($photo->filename);
+			//dd([Storage::exists($photo->imagePath()), $photo->imagePath()]);
+			if ($photo->filename && Storage::exists($photo->imagePath())) $this->photos[] = Storage::url($photo->imagePath());
 		}
 
 		if (!$this->photos) $this->photos[] = Storage::url('images/default.png');
@@ -51,10 +52,10 @@ class ProfileView extends Component
 
 	public function getBodyString()
 	{
-		$height = $this->profile->height > 0 ? $this->profile->height. 'cm | ' : '';
-		$weight = $this->profile->weight > 0 ? $this->profile->weight. 'kg | ' : '';
+		$height = $this->profile->height > 0 ? $this->profile->height . 'cm | ' : '';
+		$weight = $this->profile->weight > 0 ? $this->profile->weight . 'kg | ' : '';
 		$string = "{$height} {$weight} {$this->profile->body_type}";
-		if($string === "  ") return '';
+		if ($string === "  ") return '';
 		return $string;
 	}
 

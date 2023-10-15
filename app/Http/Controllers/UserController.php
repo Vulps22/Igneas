@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserHealth;
+use App\Models\UserImage;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class UserController extends Controller
@@ -35,7 +37,6 @@ class UserController extends Controller
 
 		if (!Auth::check()) return response("E-UC::SavProf.01 | You are not authorized to perform this action", 401);
 		if ($user_id !== Auth::user()->id) {
-			dd($user_id, Auth::user()->id);
 			return response("E-UC::SavProf.02 | You are not authorized to perform this action", 403);
 		}
 		$user =  User::find($user_id);
@@ -70,5 +71,61 @@ class UserController extends Controller
 		$sexual_health->save();
 
 		return redirect()->route('profile.editor')->with('success', 'Profile updated successfully');
+	}
+
+	function save_user_profile_image(Request $request)
+	{
+		$position = intVal($request->position);
+		$imageFile = $request->file('image');
+		$user_id = intVal($request->user_id);
+
+		//Authorise the user and get their details
+		if (!auth()->check()) return response("E-UC::SavProfImg.01 | You are not authorized to perform this action", 401);
+		if ($user_id !== Auth::user()->id) return response("E-UC::SavProfImg.02 | You are not authorized to perform this action", 403);
+		$user =  User::find($user_id);
+
+		if (!$user) return response("User not found", 401);
+		if ($position < 0 || $position > 6) return response('Invalid Position', 500);
+		if (!$imageFile) return response('No image uploaded', 400);
+		if (!$imageFile->isValid()) return response('Invalid image', 400);
+
+		//upload the file
+		$name = uniqid() . '.' . $imageFile->extension();
+
+		$imageFile->storeAs('public/images', $name);
+
+		$imageModel = UserImage::firstOrCreate([
+			'user_id' => auth()->user()->id,
+			'position' => $position
+		]);
+
+		$imageModel->filename = $name;
+		$url = asset(Storage::url("images/$name"));
+		//dump("Generated URL: $url");
+		$imageModel->save();
+
+		return response(json_encode(['url' => $url, 'position' => $position]), 200);
+	}
+
+	function delete_user_profile_image(Request $request)
+	{
+		$position = intVal($request->position);
+		$user_id = intVal($request->user_id);
+
+		//Authorise the user and get their details
+		if (!auth()->check()) return response("E-UC::DelProfImg.01 | You are not authorized to perform this action", 401);
+		if ($user_id !== Auth::user()->id) return response("E-UC::DelProfImg.02 | You are not authorized to perform this action", 403);
+		$user = User::find($user_id);
+		if (!$user) return response("User not found", 401);
+		if ($position < 0 || $position > 6) return response('Invalid Position', 500);
+
+		$imageModel = $user->images[$position];
+		$filename = $imageModel->filename;
+		if (!$filename) return response('File Not Found', 404);
+		Storage::delete("public/images/$filename");
+		$imageModel->filename = '';
+		$imageModel->save();
+
+		return response(json_encode(["position" => $position]));
 	}
 }

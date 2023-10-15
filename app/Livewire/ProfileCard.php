@@ -19,15 +19,12 @@ class ProfileCard extends Component
 		$user =  User::find($user_id);
 		$this->user = $user;
 		$this->profile = $user->profile;
-		
-		if(!$this->profile->primaryImage()) dd($user->id);
-		if( $this->profile->primaryImage()->filename && Storage::exists($this->profile->primaryImage()->filename)) 
-		{
-			$this->picture_url = Storage::url($user->profile->primaryImage()->filename);
-			$this->using_default = false;
-		}
-		else $this->picture_url = Storage::url('images/default.png');
 
+		if (!$this->profile->primaryImage()) dd($user->id);
+		if ($this->profile->primaryImage()->filename && Storage::exists($this->profile->primaryImage()->imagePath())) {
+			$this->picture_url = Storage::url($user->profile->primaryImage()->imagePath());
+			$this->using_default = false;
+		} else $this->picture_url = Storage::url('images/default.png');
 	}
 
 	public function render()

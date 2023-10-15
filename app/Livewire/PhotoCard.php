@@ -60,7 +60,6 @@ class PhotoCard extends Component
 
 	public function updatedImage()
 	{
-
 		$name = $this->image->store("public/images");
 		$this->imageModel->filename = $name;
 		$this->url = Storage::url($name);
