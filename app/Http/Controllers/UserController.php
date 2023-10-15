@@ -75,7 +75,7 @@ class UserController extends Controller
 
 	function save_user_profile_image(Request $request)
 	{
-		$position = $request->position;
+		$position = intVal($request->position);
 		$imageFile = $request->file('image');
 		$user_id = intVal($request->user_id);
 
@@ -105,5 +105,28 @@ class UserController extends Controller
 		$imageModel->save();
 
 		return response(json_encode(['url' => $url, 'position' => $position]), 200);
+	}
+
+	function delete_user_profile_image(Request $request)
+	{
+		$position = intVal($request->position);
+		$user_id = intVal($request->user_id);
+
+		//Authorise the user and get their details
+		if (!auth()->check()) return response("E-UC::DelProfImg.01 | You are not authorized to perform this action", 401);
+		if ($user_id !== Auth::user()->id) return response("E-UC::DelProfImg.02 | You are not authorized to perform this action", 403);
+		$user = User::find($user_id);
+		if (!$user) return response("User not found", 401);
+		if ($position < 0 || $position > 6) return response('Invalid Position', 500);
+
+		$imageModel = $user->images[$position];
+		$filename = $imageModel->filename;
+		if(!$filename) return response('File Not Found', 404);
+		Storage::delete("public/images/$filename");
+		$imageModel->filename = '';
+		$imageModel->save();
+
+		return response(json_encode(["position" => $position]));
+		
 	}
 }

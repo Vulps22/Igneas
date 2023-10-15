@@ -51,8 +51,8 @@ Route::get('messenger/find/{conversationId}', 'App\Http\Controllers\MessengerCon
 //userController routes
 Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location');
 Route::post('/save_user_profile', 'App\Http\Controllers\UserController@save_user_profile')->name('profile.save');
-Route::post('/save_user_profile_image', 'App\Http\Controllers\UserController@save_user_profile_image')->name('profile.save.image');
-
+Route::post('/user_profile_image', 'App\Http\Controllers\UserController@save_user_profile_image')->name('profile.save.image');
+Route::delete('/user_profile_image', 'App\Http\Controllers\UserController@delete_user_profile_image')->name('profile.delete.image');
 
 Route::post('/components/{component}', function ($component) {
 	$data = json_decode(request()->getContent(), true);
