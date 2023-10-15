@@ -29,7 +29,7 @@
 
 					<!-- Profile image uploader -->
 					<div class="grid grid-cols-3 gap-4 mt-5">
-						@for ($i = 0; $i < 6; $i++) <x-profile-editor-photo-card :position="$i" />
+						@for ($i = 0; $i < 6; $i++) <x-profile-editor-photo-card :position="$i" :url="$images[$i]" />
 						@endfor
 					</div>
 				</div>

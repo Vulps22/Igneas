@@ -1,7 +1,7 @@
 <div id="photo-card-{{$position}}" class="relative">
-	@if (isset($url))
+@if ($url)
 	<img src="{{ $url }}" alt="Profile image" class="w-full h-40 object-cover rounded-lg">
-	<button type="button" class="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none" onclick="removeImage()">
+	<button type="button" class="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none" data-position="{{$position}}" onclick="removeImage(event)">
 		<svg class="h-4 w-4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
 			<path d="M6 18L18 6M6 6l12 12"></path>
 		</svg>
