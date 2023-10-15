@@ -38,7 +38,7 @@ class UserProfile extends Model
 
 	public function health()
 	{
-		return $this->user()->health();
+		return $this->user->health();
 	}
 
 	public function images()
@@ -77,6 +77,56 @@ class UserProfile extends Model
 		if($this->show_age) return $this->user->age();
 
 		return '';
+	}
+
+	public function getHIVString()
+	{
+		if (!$this->health->show_hiv_status) return '';
+
+		if ($this->health->on_prep) $prep = 'on prep';
+		else $prep = 'not on prep';
+		return "{$this->health->hiv_status} | {$prep}";
+	}
+
+	public function getLastTestString()
+	{
+		if (!$this->health->show_last_STI_test) return '';
+		return $this->health->last_STI_test->format('d/m/Y');
+	}
+
+	public function getGenderString()
+	{
+		$gender = explode('_', $this->gender);
+		return (count($gender) > 1) ? "{$gender[0]} {$gender[1]}" : $gender[0];
+	}
+
+	public function getDominanceString()
+	{
+		$dominance = explode('_', $this->dominance);
+		return (count($dominance) > 1) ? "{$dominance[0]} {$dominance[1]}" : $dominance[0];
+	}
+
+	public function getPositionString()
+	{
+		$position = explode('_', $this->position);
+		return (count($position) > 1) ? "{$position[0]} {$position[1]}" : $position[0];
+	}
+
+	public function getEthnicityString()
+	{
+		$ethnicity = explode('_', $this->ethnicity);
+		return (count($ethnicity) > 1) ? "{$ethnicity[0]} {$ethnicity[1]}" : $ethnicity[0];
+	}
+
+	public function getLookingForString()
+	{
+		$looking = explode('_', $this->looking_for);
+		return (count($looking) > 1) ? "{$looking[0]} {$looking[1]}" : $looking[0];
+	}
+	public function getRelationshipString()
+	{
+		$relationship = explode('_', $this->relationship_status);
+		return (count($relationship) > 1) ? "{$relationship[0]} {$relationship[1]}" : $relationship[0];
 	}
 
 }

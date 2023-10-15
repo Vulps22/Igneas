@@ -24,10 +24,10 @@ class ProfileView extends Component
 		$userId = request()->route('userId');
 		if (!Auth::check()) return redirect()->route('login');
 
-		if(!$userId) return redirect()->route('home');
+		if (!$userId) return redirect()->route('home');
 
 		$this->user = User::find($userId);
-		if(!$this->user) return redirect()->route('home');
+		if (!$this->user) return redirect()->route('home');
 
 		$this->profile = $this->user->profile;
 		$photos = $this->profile->images->all();
@@ -35,10 +35,10 @@ class ProfileView extends Component
 		$this->health = $this->user->health;
 
 		foreach ($photos as $photo) {
-			if($photo->filename && Storage::exists($photo->filename)) $this->photos[] = Storage::url($photo->filename);
+			if ($photo->filename && Storage::exists($photo->filename)) $this->photos[] = Storage::url($photo->filename);
 		}
 
-		if(!$this->photos) $this->photos[] = Storage::url('images/default.png');
+		if (!$this->photos) $this->photos[] = Storage::url('images/default.png');
 
 		$this->selectedImage = $this->photos[0];
 	}
@@ -51,25 +51,14 @@ class ProfileView extends Component
 
 	public function getBodyString()
 	{
-		return "{$this->profile->height}cm | {$this->profile->weight}kg | {$this->profile->body_type}";
+		$height = $this->profile->height > 0 ? $this->profile->height. 'cm | ' : '';
+		$weight = $this->profile->weight > 0 ? $this->profile->weight. 'kg | ' : '';
+		$string = "{$height} {$weight} {$this->profile->body_type}";
+		if($string === "  ") return '';
+		return $string;
 	}
 
-	public function getHIVString()
-	{
-		if(!$this->health->show_hiv_status) return '';
-
-		if($this->health->on_prep) $prep = 'on prep';
-		else $prep = 'not on prep';
-		return "{$this->health->hiv_status} | {$prep}";
-	}
-
-	public function getLastTestString()
-	{
-		if(!$this->health->show_last_STI_test) return '';
-		return $this->health->last_STI_test->format('d/m/Y');
-	}
-
-	#[Layout('layouts.app')] 
+	#[Layout('layouts.app')]
 	public function render()
 	{
 		return view('livewire.profile-view');

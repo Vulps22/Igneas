@@ -45,21 +45,21 @@
 
 
 		<div class="grid grid-rows gap-4 w-1/2 mx-auto pt-5 text-xl capitalize">
-			<livewire:profile-item :icon="'transgender'" :value="$profile->gender" />
+			<livewire:profile-item :icon="'transgender'" :value="$profile->getGenderString()" />
 			<livewire:profile-item :icon="'ruler'" :value="$this->getBodyString()" :wide="true" />
-			<livewire:profile-item :icon="'circle-half-stroke'" :value="$profile->ethnicity" />
-			<livewire:profile-item :icon="'heart'" :value="$profile->relationship_status" />
-			<livewire:profile-item :icon="'binoculars'" :value="$profile->looking_for" />
-			<livewire:profile-item :icon="'arrows-up-down'" :value="$profile->position" />
-			<livewire:profile-item :icon="'handcuffs'" :value="$profile->dominance" />
+			<livewire:profile-item :icon="'circle-half-stroke'" :value="$profile->getEthnicityString()" />
+			<livewire:profile-item :icon="'heart'" :value="$profile->getRelationshipString()" />
+			<livewire:profile-item :icon="'binoculars'" :value="$profile->getLookingForString()" />
+			<livewire:profile-item :icon="'arrows-up-down'" :value="$profile->getPositionString()" />
+			<livewire:profile-item :icon="'handcuffs'" :value="$profile->getDominanceString()" />
 		</div>
 	</div>
 	@if($health->show_hiv_status && $health->hiv_status)
 	<div class="rounded-lg border-2 border-neutral-800 mt-5 p-10 mb-5 w-2/3">
 		<h3 class="text-2xl text-neutral-300">Health</h3>
 		<div class="grid grid-rows gap-4 w-1/2 mx-auto pt-5 text-xl capitalize">
-			<livewire:profile-item :icon="'ribbon'" :title="'HIV Status'" :value="$this->getHIVString()" />
-			<livewire:profile-item :icon="'calendar'" :title="'Last Tested'" :value="$this->getLastTestString()" />
+			<livewire:profile-item :icon="'ribbon'" :title="'HIV Status'" :value="$profile->getHIVString()" />
+			<livewire:profile-item :icon="'calendar'" :title="'Last Tested'" :value="$profile->getLastTestString()" />
 		</div>
 	</div>
 	@endif
