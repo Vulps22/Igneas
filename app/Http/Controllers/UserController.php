@@ -8,8 +8,10 @@ use App\Models\UserImage;
 use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use MatanYadaev\EloquentSpatial\Objects\Point;
+use RecursiveDirectoryIterator;
 
 class UserController extends Controller
 {
@@ -103,6 +105,21 @@ class UserController extends Controller
 		$url = Storage::url($name);
 		//dump("Generated URL: $url");
 		$imageModel->save();
+
+		$publicPath = public_path();
+
+if (File::isDirectory($publicPath)) {
+    $iterator = new RecursiveDirectoryIterator(new RecursiveDirectoryIterator($publicPath));
+
+    foreach ($iterator as $file) {
+        // Check if the item is a file (not a directory)
+        if ($file->isFile()) {
+            echo $file->getRealPath() . "\n";
+        }
+    }
+} else {
+    echo 'Public directory not found.';
+}
 
 		return response(json_encode(['url' => $url, 'position' => $position]), 200);
 	}
