@@ -88,8 +88,8 @@
 							<option value="top" {{ $profile->position == 'top' ? 'selected' : '' }}>Top</option>
 							<option value="bottom" {{ $profile->position == 'bottom' ? 'selected' : '' }}>Bottom</option>
 							<option value="verse" {{ $profile->position == 'verse' ? 'selected' : '' }}>Verse</option>
-							<option value="verse_top" {{ $profile->position == 'verse-top' ? 'selected' : '' }}>Verse Top</option>
-							<option value="verse_bottom" {{ $profile->position == 'verse-bottom' ? 'selected' : '' }}>Verse Bottom</option>
+							<option value="verse_top" {{ $profile->position == 'verse_top' ? 'selected' : '' }}>Verse Top</option>
+							<option value="verse_bottom" {{ $profile->position == 'verse_bottom' ? 'selected' : '' }}>Verse Bottom</option>
 						</select>
 					</div>
 					<div class="grid grid-cols-6 gap-1 pt-2">
@@ -99,8 +99,8 @@
 							<option value="dom" {{ $profile->dominance == 'dom' ? 'selected' : '' }}>Dom</option>
 							<option value="sub" {{ $profile->dominance == 'sub' ? 'selected' : '' }}>sub</option>
 							<option value="switch" {{ $profile->dominance == 'switch' ? 'selected' : '' }}>Switch</option>
-							<option value="switch_dom" {{ $profile->dominance == 'switch-dom' ? 'selected' : '' }}>Switch Dom</option>
-							<option value="switch_sub" {{ $profile->dominance == 'switch-sub' ? 'selected' : '' }}>Switch Sub</option>
+							<option value="switch_dom" {{ $profile->dominance == 'switch_dom' ? 'selected' : '' }}>Switch Dom</option>
+							<option value="switch_sub" {{ $profile->dominance == 'switch_sub' ? 'selected' : '' }}>Switch Sub</option>
 
 						</select>
 					</div>
@@ -126,7 +126,7 @@
 							<option value="">Prefer Not To Say</option>
 							<option value="single" {{ $profile->relationship_status == 'single' ? 'selected' : '' }}>Single</option>
 							<option value="dating" {{ $profile->relationship_status == 'dating' ? 'selected' : '' }}>Dating</option>
-							<option value="not_looking" {{ $profile->relationship_status == 'not-looking' ? 'selected' : '' }}>Not Looking</option>
+							<option value="not_looking" {{ $profile->relationship_status == 'not_looking' ? 'selected' : '' }}>Not Looking</option>
 						</select>
 					</div>
 					<div class="grid grid-cols-6 gap-1 pt-2">
@@ -135,7 +135,7 @@
 							<option value="">Prefer Not To Say</option>
 							<option value="friends" {{ $profile->looking_for == 'friends' ? 'selected' : '' }}>Friends</option>
 							<option value="relationship" {{ $profile->looking_for == 'relationship' ? 'selected' : '' }}>Relationship</option>
-							<option value="right_now" {{ $profile->looking_for == 'right-now' ? 'selected' : '' }}>Right Now</option>
+							<option value="right_now" {{ $profile->looking_for == 'right_now' ? 'selected' : '' }}>Right Now</option>
 						</select>
 					</div>
 					<div class="grid grid-cols-6 gap-1 pt-2">
@@ -144,8 +144,8 @@
 							<option value="">Prefer Not To Say</option>
 							<option value="male" {{ $profile->gender == 'male' ? 'selected' : '' }}>Male</option>
 							<option value="female" {{ $profile->gender == 'female' ? 'selected' : '' }}>Female</option>
-							<option value="trans_male" {{ $profile->gender == 'transm' ? 'selected' : '' }}>Trans Male</option>
-							<option value="trans_female" {{ $profile->gender == 'transf' ? 'selected' : '' }}>Trans Female</option>
+							<option value="trans_male" {{ $profile->gender == 'trans_male' ? 'selected' : '' }}>Trans Male</option>
+							<option value="trans_female" {{ $profile->gender == 'trans_female' ? 'selected' : '' }}>Trans Female</option>
 							<option value="non-binary" {{ $profile->gender == 'non-binary' ? 'selected' : '' }}>Non-binary</option>
 							
 							

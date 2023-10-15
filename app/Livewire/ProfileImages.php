@@ -34,6 +34,7 @@ class ProfileImages extends Component
 
 	public function updatedImages()
 	{
+		dd("Here!");
 		$this->validate([
 			'images.*' => 'image|max:1024', // Validate image files
 		]);
