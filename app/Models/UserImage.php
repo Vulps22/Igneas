@@ -28,10 +28,10 @@ class UserImage extends Model
 	}
 
 	public function imagePath(){
-		if($this->filename) return "public/images/{{$this->filename}}";
+		if($this->filename) return "public/images/{$this->filename}";
 	}
 
 	public function imageURL(){
-		if($this->filename) return "/images/{{$this->filename}}";
+		if($this->filename) return "/images/{$this->filename}";
 	}
 }
