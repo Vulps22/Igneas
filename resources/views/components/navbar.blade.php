@@ -3,7 +3,7 @@
 	<div class="flex pr-20">
 		<a href="/" class="-m-1.5 p-1.5">
 			<span class="sr-only">Hooky</span>
-			<img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="">
+			<img class="h-8 w-auto border border-0 rounded-full " src="storage/images/logo.png" alt="">
 		</a>
 	</div>
 
