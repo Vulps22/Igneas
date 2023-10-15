@@ -21,9 +21,9 @@ class ProfileCard extends Component
 		$this->profile = $user->profile;
 		
 		if(!$this->profile->primaryImage()) dd($user->id);
-		if( $this->profile->primaryImage()->filename && Storage::exists($this->profile->primaryImage()->filePath())) 
+		if( $this->profile->primaryImage()->filename && Storage::exists($this->profile->primaryImage()->imagePath())) 
 		{
-			$this->picture_url = Storage::url($user->profile->primaryImage()->filePath());
+			$this->picture_url = Storage::url($user->profile->primaryImage()->imagePath());
 			$this->using_default = false;
 		}
 		else $this->picture_url = Storage::url('images/default.png');
