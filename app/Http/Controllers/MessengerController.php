@@ -24,18 +24,21 @@ class MessengerController extends Controller
 
 	public function index($userId = null)
 	{
-		dd($userId);
+		dump($userId);
 
 		if (!auth()->check()) return redirect()->route('login'); //user is not logged in, Redirect them
 
 		$this->user = auth()->user();
-		
+		dump($this->user->id);
 		$this->selectedConversationId = null;
 		if ($userId) {
+			dump("User id exists");
 			$this->selectedConversationId = $this->getConversationId($userId);
+			dump($this->selectedConversationId);
 		}
 		$conversations = $this->getConversations();
-
+		dump($conversations);
+dd("DONE!");
 		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $this->selectedConversationId]);
 	}
 
@@ -67,6 +70,7 @@ class MessengerController extends Controller
 	 */
 	public function getConversationId($userId)
 	{
+		dump('Getting ConversationId');
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
 		// userId could be user_one OR user_two
@@ -78,6 +82,7 @@ class MessengerController extends Controller
 				'user_two' => $userId
 			]);
 		}
+		dump($conversation);
 
 
 		return $conversation->id;
