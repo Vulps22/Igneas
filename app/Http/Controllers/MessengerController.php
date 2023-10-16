@@ -24,8 +24,9 @@ class MessengerController extends Controller
 
 	public function index($userId = null)
 	{
+		dd($userId);
 
-		if (!auth()->check()) return redirect()->route('login');
+		if (!auth()->check()) return redirect()->route('login'); //user is not logged in, Redirect them
 
 		$this->user = auth()->user();
 		
@@ -95,7 +96,7 @@ class MessengerController extends Controller
 		$user_id = Auth::user()->id;
 
 		$conversation = UserConversation::find($request->conversationId);
-		if (!$conversation) return null;
+		if (!$conversation) return response("Conversation Not Found", 404);
 		if ($conversation->user_one !== $user_id && $conversation->user_two !== $user_id) abort(403, 'Unauthorized action.');
 
 		$userProfile = $conversation->users()[0]->id === $user_id ? $conversation->users()[1]->profile : $conversation->users()[0]->profile;
@@ -103,7 +104,6 @@ class MessengerController extends Controller
 		$userImage = $userProfile->primaryImageURL();
 		$userName = $userProfile->display_name;
 		$userAge = $userProfile->age();
-
 
 		$user = [
 			'id' => $userId,
