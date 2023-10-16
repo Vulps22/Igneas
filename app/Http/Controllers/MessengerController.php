@@ -24,20 +24,20 @@ class MessengerController extends Controller
 
 	public function index($userId = null)
 	{
-		dump($userId);
+		var_dump($userId);
 
 		if (!auth()->check()) return redirect()->route('login'); //user is not logged in, Redirect them
 
 		$this->user = auth()->user();
-		dump($this->user->id);
+		var_dump($this->user->id);
 		$this->selectedConversationId = null;
 		if ($userId) {
-			dump("User id exists");
+			var_dump("User id exists");
 			$this->selectedConversationId = $this->getConversationId($userId);
-			dump($this->selectedConversationId);
+			var_dump($this->selectedConversationId);
 		}
 		$conversations = $this->getConversations();
-		dump($conversations);
+		var_dump($conversations);
 dd("DONE!");
 		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $this->selectedConversationId]);
 	}
@@ -70,22 +70,22 @@ dd("DONE!");
 	 */
 	public function getConversationId($userId)
 	{
-		dump('Getting ConversationId');
+		var_dump('Getting ConversationId');
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
 		// userId could be user_one OR user_two
-		dump("UserID for conversation search: $userId");
-		dump($this->user->conversations);
+		var_dump("UserID for conversation search: $userId");
+		var_dump($this->user->conversations);
 		$conversation = $this->user->conversations()->where('user_one', $userId)->orWhere('user_two', $userId)->first();
-		dump($conversation ?? "Not Found");
+		var_dump($conversation ?? "Not Found");
 		if (!$conversation) {
-			dump('Creating:');
+			var_dump('Creating:');
 			$conversation = $this->user->conversations()->create([
 				'user_one' => $this->user->id,
 				'user_two' => $userId
 			]);
 		}
-		dump($conversation);
+		var_dump($conversation);
 
 
 		return $conversation->id;
