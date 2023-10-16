@@ -76,7 +76,9 @@ dd("DONE!");
 		// userId could be user_one OR user_two
 
 		$conversation = $this->user->conversations()->where('user_one', $userId)->orWhere('user_two', $userId)->first();
+		dump($conversation ?? "Not Found");
 		if (!$conversation) {
+			dump('Creating:');
 			$conversation = $this->user->conversations()->create([
 				'user_one' => $this->user->id,
 				'user_two' => $userId
