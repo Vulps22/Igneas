@@ -38,7 +38,7 @@ class MessengerController extends Controller
 		}
 		$conversations = $this->getConversations();
 		dump($conversations);
-dd("DONE!");
+		dd("DONE!");
 		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $this->selectedConversationId]);
 	}
 
@@ -49,11 +49,11 @@ dd("DONE!");
 		$conversation = $this->user->conversations;
 
 		if ($conversation->count() === 0) return $conversations;
-		
+
 		foreach ($conversation as $convo) {
 			$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
 			$latest = $convo->messages()->where('user_conversation_id', $convo->id)->latest()->first();
-			if(!$latest && $convo->id !== $this->selectedConversationId) continue;
+			if (!$latest && $convo->id !== $this->selectedConversationId) continue;
 
 			$conversations[] = [
 				'id' => $convo->id,
@@ -76,15 +76,14 @@ dd("DONE!");
 		// userId could be user_one OR user_two
 		dump("UserID for conversation search: $userId --- Logged In User: {$this->user->id}");
 		dump($this->user->conversations);
-		$conversation = $this->user->conversations->where('user_one', $userId)->orWhere('user_two', $userId)->first();
-		dump($conversation ?? "Not Found");
-		if (!$conversation) {
-			dump('Creating:');
-			$conversation = $this->user->conversations()->create([
+		$conversation = $this->user->conversations()
+			->where('user_one', $userId)
+			->orWhere('user_two', $userId)
+			->firstOrCreate([
 				'user_one' => $this->user->id,
 				'user_two' => $userId
 			]);
-		}
+			
 		dump($conversation);
 
 		return $conversation->id;
@@ -160,11 +159,12 @@ dd("DONE!");
 	/**
 	 * Authorise the user to perform the action by validating they have access to the conversation and are logged in
 	 */
-	private function authorise(Request $request){
-		if(!Auth::check()) abort(401, 'Not Authorised.');
+	private function authorise(Request $request)
+	{
+		if (!Auth::check()) abort(401, 'Not Authorised.');
 		$convo = UserConversation::find($request->conversation_id);
-		if(!$convo) abort(404, 'Conversation not found.');
-		if($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
+		if (!$convo) abort(404, 'Conversation not found.');
+		if ($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
 		return true;
 	}
 }
