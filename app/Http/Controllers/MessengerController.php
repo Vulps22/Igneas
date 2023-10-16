@@ -76,7 +76,7 @@ dd("DONE!");
 		// userId could be user_one OR user_two
 		dump("UserID for conversation search: $userId --- Logged In User: {$this->user->id}");
 		dump($this->user->conversations);
-		$conversation = $this->user->conversations()->where('user_one', $userId)->orWhere('user_two', $userId)->first();
+		$conversation = $this->user->conversations->where('user_one', $userId)->orWhere('user_two', $userId)->first();
 		dump($conversation ?? "Not Found");
 		if (!$conversation) {
 			dump('Creating:');
@@ -86,7 +86,6 @@ dd("DONE!");
 			]);
 		}
 		dump($conversation);
-
 
 		return $conversation->id;
 	}
