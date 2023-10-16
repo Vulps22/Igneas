@@ -74,7 +74,8 @@ dd("DONE!");
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
 		// userId could be user_one OR user_two
-
+		dump("UserID for conversation search: $userId");
+		dump($this->user->conversations);
 		$conversation = $this->user->conversations()->where('user_one', $userId)->orWhere('user_two', $userId)->first();
 		dump($conversation ?? "Not Found");
 		if (!$conversation) {
