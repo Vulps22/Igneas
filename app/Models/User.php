@@ -92,16 +92,15 @@ class User extends Authenticatable
 		$userLoc = $this->location;
 		$userLong = $userLoc->longitude;
 		$userLat = $userLoc->latitude;
-		
+
 		$pointLong = $point->longitude;
 		$pointLat = $point->latitude;
 
 		$distance = $this->distanceBetween($userLat, $userLong, $pointLat, $pointLong, "K");
 
-		if($distance < 1) return "< 1km";
+		if ($distance < 1) return "< 1km";
 
 		return round($distance, 2) . "km";
-
 	}
 
 	/**
@@ -109,7 +108,7 @@ class User extends Authenticatable
 	 */
 	public function conversations()
 	{
-		return $this->hasMany(UserConversation::class, 'user_one')->orWhere('user_two', $this->id);
+		return $this->belongsToMany(Conversation::class);
 	}
 
 	/**
@@ -121,7 +120,8 @@ class User extends Authenticatable
 	 * @param string $unit Unit of distance (K = kilometers, N = nautical miles, M = miles)
 	 * @return float Distance between points in the specified unit
 	 */
-	function distanceBetween($lat1, $lon1, $lat2, $lon2, $unit) {
+	function distanceBetween($lat1, $lon1, $lat2, $lon2, $unit)
+	{
 
 		$theta = $lon1 - $lon2;
 		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
@@ -129,13 +129,13 @@ class User extends Authenticatable
 		$dist = rad2deg($dist);
 		$miles = $dist * 60 * 1.1515;
 		$unit = strtoupper($unit);
-	  
+
 		if ($unit == "K") {
-		  return ($miles * 1.609344);
+			return ($miles * 1.609344);
 		} else if ($unit == "N") {
 			return ($miles * 0.8684);
-		  } else {
-			  return $miles;
-			}
-	  }
+		} else {
+			return $miles;
+		}
+	}
 }

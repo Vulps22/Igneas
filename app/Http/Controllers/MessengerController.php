@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
+use App\Models\Conversation;
 use App\Models\Message;
-use App\Models\User;
-use App\Models\UserConversation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,9 +43,10 @@ class MessengerController extends Controller
 		if ($conversation->count() === 0) return $conversations;
 
 		foreach ($conversation as $convo) {
-			$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
-			$latest = $convo->messages()->where('user_conversation_id', $convo->id)->latest()->first();
-			if (!$latest && $convo->id !== $this->selectedConversationId) continue;
+			$user = $convo->users()->wherePivotNotIn('user_id', [$this->user->id])->first()->profile;
+			//$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
+			$latest = $convo->messages()->latest()->first();
+			if (!$latest && $convo->id !== $this->selectedConversationId) continue; //This is a Dead Conversation (User created it but never sent a message) -- These should be hidden from the other user
 
 			$conversations[] = [
 				'id' => $convo->id,
@@ -66,14 +66,15 @@ class MessengerController extends Controller
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
 		// userId could be user_one OR user_two
-		$conversation = $this->user->conversations()
-			->where('user_one', $userId)
-			->orWhere('user_two', $userId)
-			->firstOrCreate([
-				'user_one' => $this->user->id,
-				'user_two' => $userId
-			]);
 
+		$conversation = $this->user->conversations()->whereHas('users', function ($query) use ($userId) {
+			$query->where('id', $userId);
+		})->first();
+		if (!$conversation) {
+			$conversation = $this->user->conversations()->create();
+			$conversation->save();
+			$conversation->users()->attach($userId);
+		}
 		return $conversation->id;
 	}
 
@@ -89,11 +90,11 @@ class MessengerController extends Controller
 
 		$user_id = Auth::user()->id;
 
-		$conversation = UserConversation::find($request->conversationId);
+		$conversation = Conversation::find($request->conversationId);
 		if (!$conversation) return response("Conversation Not Found", 404);
-		if ($conversation->user_one !== $user_id && $conversation->user_two !== $user_id) abort(403, 'Unauthorized action.');
+		if (!$conversation->wherePivot('user_id', $user_id)->first()) abort(403, 'Unauthorized action.');
 
-		$userProfile = $conversation->users()[0]->id === $user_id ? $conversation->users()[1]->profile : $conversation->users()[0]->profile;
+		$userProfile = $conversation->users->wherePivotNotIn('user_id', [$user_id]);
 		$userId = $userProfile->user->id;
 		$userImage = $userProfile->primaryImageURL();
 		$userName = $userProfile->display_name;
@@ -109,7 +110,7 @@ class MessengerController extends Controller
 		$conversation = [
 			'id' => $conversation->id,
 			'user' => $user,
-			'latest' => $conversation->messages()->where('user_conversation_id', $conversation->id)->latest()->first()
+			'latest' => $conversation->messages()->latest()->first()
 		];
 
 		return $conversation;
@@ -122,7 +123,7 @@ class MessengerController extends Controller
 
 		//create a new message
 		$message = Message::create([
-			'user_conversation_id' => $request->conversation_id,
+			'conversation_id' => $request->conversation_id,
 			'sender_id' => $request->user()->id,
 			'text' => $request->text,
 		]);
@@ -139,7 +140,7 @@ class MessengerController extends Controller
 		$this->authorise($request);
 
 		//get the messages for the conversation
-		$messages = Message::where('user_conversation_id', $request->conversation_id)->get();
+		$messages = Message::where('conversation_id', $request->conversation_id)->get();
 
 		return ['messages' => $messages];
 	}
@@ -150,9 +151,9 @@ class MessengerController extends Controller
 	private function authorise(Request $request)
 	{
 		if (!Auth::check()) abort(401, 'Not Authorised.');
-		$convo = UserConversation::find($request->conversation_id);
+		$convo = Conversation::find($request->conversation_id);
 		if (!$convo) abort(404, 'Conversation not found.');
-		if ($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
+		if (!$convo->users()->wherePivot('user_id', Auth::user()->id)->first()) abort(403, 'Unauthorized action.');
 		return true;
 	}
 }

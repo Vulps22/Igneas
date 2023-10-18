@@ -53,6 +53,17 @@ function sendMessage(conversationId, senderId, text) {
 		success: function (response) {
 			// Update the message list with the new message
 			updateMessageList(response.messages, senderId);
+			//update conversation list with latest message
+			var message = document.getElementById('message' + conversationId);
+			message.innerHTML = text;
+
+			//get the convo list
+			let conversationList = document.getElementById('conversation-list');
+			let selectedConversation = conversationList.getElementsByClassName('bg-neutral-800')[0];
+			selectedConversation.remove();
+			conversationList.prepend(selectedConversation);
+
+
 		},
 		error: function (xhr, status, error) {
 			console.error(error);
@@ -115,7 +126,8 @@ function conversationItem(conversation) {
 	const conversationItem = document.createElement('div');
 	conversationItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'hover:bg-gray-100', 'cursor-pointer', 'conversation-list-item');
 	conversationItem.id = 'conversation' + conversation.id;
-	conversationItem.setName('data-conversation-id', conversation.id);
+	conversationItem.setAttribute('name', 'conversation-list-item');
+	conversationItem.setAttribute('data-conversation-id', conversation.id);
 	conversationItem.addEventListener('click', () => {
 		selectConversation(conversation.id);
 	});
@@ -184,9 +196,10 @@ function initMessenger() {
 			console.log(event);
 
 			if (conversationOpen && event.message.conversation_id == document.getElementById('message-form').getAttribute('data-conversation-id')) {
+				console.log("Convo Open");
 				updateMessageList(event.message, window.user);
 			}
-
+			console.log("Updating List");
 			updateConversationList(event.message)
 				.then(() => {
 					var noConvoElement = document.getElementById('noConvo')
@@ -205,7 +218,7 @@ function initMessenger() {
 
 function updateConversationList(message) {
 
-	console.log("Update")
+	console.log("Update List")
 	return new Promise((resolve, reject) => {
 		//get an array of all the conversation id's in the conversation list
 		let conversationExists = false;

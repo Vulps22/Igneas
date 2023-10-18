@@ -10,18 +10,16 @@ class Message extends Model
 {
 	use HasFactory;
 
-	protected $table = 'conversation_message';
-
 	protected $fillable = [
-		'user_conversation_id',
+		'conversation_id',
 		'sender_id',
 		'text',
 		'image_id',
 	];
 
-	public function conversation(): UserConversation
+	public function conversation()
 	{
-		return UserConversation::find($this->user_conversation_id);
+		return $this->belongsTo(Conversation::class);
 	}
 
 	public function sender()

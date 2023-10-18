@@ -23,8 +23,8 @@ class MessageSent implements ShouldBroadcast
 	public function __construct(Message $message)
 	{
 		$this->message = $message;
-		
-		$users = $this->message->conversation()->users();
+
+		$users = $this->message->conversation->users;
 		$this->recipientId = 0;
 		$this->recipientId = $users[0]->id === $this->message->sender_id ? $users[1]->id : $users[0]->id;
 		error_log('MessageSent constructor recipientId: ' . $this->recipientId);
@@ -39,10 +39,10 @@ class MessageSent implements ShouldBroadcast
 	{
 
 		//if the sender id is equal to the first user in the conversation, then the recipient is the second user otherwise the recipient is the first user
-		
+
 		error_log('MessageSent broadcastOn recipientId: ' . $this->recipientId);
 		return [
-			new PrivateChannel('conversation.user.'. $this->recipientId),
+			new PrivateChannel('conversation.user.' . $this->recipientId),
 		];
 	}
 
@@ -57,7 +57,7 @@ class MessageSent implements ShouldBroadcast
 		return [
 			'message' => [
 				'id' => $this->message->id,
-				'conversation_id' => $this->message->user_conversation_id,
+				'conversation_id' => $this->message->conversation_id,
 				'sender_id' => $this->message->sender_id,
 				'text' => $this->message->text,
 				'created_at' => $this->message->created_at->toIso8601String(),

@@ -11,12 +11,8 @@ return new class extends Migration
 	 */
 	public function up(): void
 	{
-		Schema::create('conversation_message', function (Blueprint $table) {
+		Schema::create('conversations', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('user_conversation_id')->constrained("user_conversation");
-			$table->integer('sender_id');
-			$table->text('text')->default('');
-			$table->integer('image_id')->nullable();
 			$table->timestamps();
 		});
 	}
@@ -26,6 +22,6 @@ return new class extends Migration
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('conversation_message');
+		//
 	}
 };
