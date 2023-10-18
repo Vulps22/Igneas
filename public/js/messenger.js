@@ -204,7 +204,7 @@ function initMessenger() {
 const conversationIds = new Set();
 
 function updateConversationList(message) {
-
+console.log("CONVERSATION UPDATE!");
 	return new Promise(async (resolve, reject) => {
 
 		console.log(conversationIds);
