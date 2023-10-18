@@ -37,8 +37,12 @@ try {
 if (window.user) {
 	window.Echo.private(`conversation.user.${window.user}`)
 		.listen('MessageSent', (event) => {
-			const audio = new Audio('/sounds/messenger.mp3');
-			audio.play();
+			try {
+				const audio = new Audio('/sounds/messenger.mp3');
+				audio.play();
+			} catch (error) { 
+				
+			}
 		});
 	if (typeof initMessenger === 'function') {
 		initMessenger();

@@ -92,10 +92,10 @@ class MessengerController extends Controller
 
 		$conversation = Conversation::find($request->conversationId);
 		if (!$conversation) return response("Conversation Not Found", 404);
-		if (!$conversation->wherePivot('user_id', $user_id)->first()) abort(403, 'Unauthorized action.');
+		if (!$conversation->users()->wherePivot('user_id', $user_id)->first()) abort(403, 'Unauthorized action.');
 
-		$userProfile = $conversation->users->wherePivotNotIn('user_id', [$user_id]);
-		$userId = $userProfile->user->id;
+		$userProfile = $conversation->users()->wherePivotNotIn('user_id', [$user_id])->first()->profile;
+		$userId = $userProfile->id;
 		$userImage = $userProfile->primaryImageURL();
 		$userName = $userProfile->display_name;
 		$userAge = $userProfile->age();
