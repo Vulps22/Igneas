@@ -110,7 +110,7 @@ function recipientMessage(message) {
 }
 
 function conversationItem(conversation) {
-	if(!conversation) throw new Error('Conversation is Was Null or Undefined');
+	if (!conversation) throw new Error('Conversation is Was Null or Undefined');
 	// Create a new conversation item element
 	const conversationItem = document.createElement('div');
 	conversationItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'hover:bg-gray-100', 'cursor-pointer', 'conversation-list-item');
@@ -185,7 +185,7 @@ function initMessenger() {
 			if (conversationOpen && event.message.conversation_id == document.getElementById('message-form').getAttribute('data-conversation-id')) {
 				updateMessageList(event.message, window.user);
 			}
-			
+
 			updateConversationList(event.message)
 				.then(() => {
 					document.getElementById('noConvo').setAttribute('hidden', true);
@@ -201,37 +201,40 @@ function initMessenger() {
 }
 
 // Keep list of known conversation ids
-const conversationIds = new Set(); 
+const conversationIds = new Set();
 
 function updateConversationList(message) {
 
-  return new Promise(async (resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 
-    // If conversation already exists, resolve immediately
-    if (conversationIds.has(message.conversation_id)) {
-      return resolve();
-    }
+		console.log(conversationIds);
+		console.log("Looking For: ", message.conversation_id);
+		// If conversation already exists, resolve immediately
+		if (conversationIds.has(message.conversation_id)) {
+			console.log("Found Conversation");
+			return resolve();
+		}
+		console.log("Conversation Not Found");
+		// Otherwise fetch conversation details and add 
+		try {
+			const response = await $.ajax({
+				url: '/messenger/find/' + message.conversation_id,
+				type: 'GET'
+			});
 
-    // Otherwise fetch conversation details and add 
-    try {
-      const response = await $.ajax({
-        url: '/messenger/find/' + message.conversation_id,
-        type: 'GET' 
-      });
-      
-      // Add conversation to DOM
-      const conversationList = document.getElementById('conversation-list');
-      conversationList.prepend(conversationItem(response));
+			// Add conversation to DOM
+			const conversationList = document.getElementById('conversation-list');
+			conversationList.prepend(conversationItem(response));
 
-      // Add id to known list
-      conversationIds.add(message.conversation_id);
+			// Add id to known list
+			conversationIds.add(message.conversation_id);
 
-      resolve();  
-    } catch (error) {
-      reject(error);
-    }
+			resolve();
+		} catch (error) {
+			reject(error);
+		}
 
-  });
+	});
 
 }
 
