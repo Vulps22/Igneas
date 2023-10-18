@@ -110,7 +110,7 @@ function recipientMessage(message) {
 }
 
 function conversationItem(conversation) {
-	if (!conversation) throw new Error('Conversation is Null or Undefined');
+	if (!conversation) throw new Error('Conversation is Was Null or Undefined');
 	// Create a new conversation item element
 	const conversationItem = document.createElement('div');
 	conversationItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'hover:bg-gray-100', 'cursor-pointer', 'conversation-list-item');
@@ -186,7 +186,7 @@ function initMessenger() {
 			if (conversationOpen && event.message.conversation_id == document.getElementById('message-form').getAttribute('data-conversation-id')) {
 				updateMessageList(event.message, window.user);
 			}
-			
+
 			updateConversationList(event.message)
 				.then(() => {
 					var noConvoElement = document.getElementById('noConvo')
@@ -202,7 +202,11 @@ function initMessenger() {
 		});
 }
 
+// Keep list of known conversation ids
+const conversationIds = new Set();
+
 function updateConversationList(message) {
+
 	console.log("Update")
 	return new Promise((resolve, reject) => {
 		//get an array of all the conversation id's in the conversation list
@@ -223,18 +227,9 @@ function updateConversationList(message) {
 			//get the conversation from the server
 			$.ajax({
 				url: '/messenger/find/' + message.conversation_id,
-				type: 'GET',
-				success: function (response) {
-					console.log(response)
-					// Add the conversation to the conversation list
-					var conversationList = document.getElementById('conversation-list');
-					conversationList.prepend(conversationItem(response));
-					resolve();
-				},
-				error: function (xhr, status, error) {
-					reject(error);
-				},
+				type: 'GET'
 			});
+
 		} else { //the conversation is in the list; Move it to the top
 			if(!conversation) resolve();
 			
@@ -243,9 +238,14 @@ function updateConversationList(message) {
 			conversationList.prepend(conversation);
 
 			resolve();
+		} catch (error) {
+			reject(error);
 		}
+
 	});
+
 }
+
 function loadConversation() {
 	// Get the conversation ID from the conversation element
 	const conversationId = document.getElementById('conversation').getAttribute('data-conversation-id');

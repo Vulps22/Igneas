@@ -24,17 +24,14 @@ class MessengerController extends Controller
 
 	public function index($userId = null)
 	{
-
-		if (!auth()->check()) return redirect()->route('login');
+		if (!auth()->check()) return redirect()->route('login'); //user is not logged in, Redirect them
 
 		$this->user = auth()->user();
-		
 		$this->selectedConversationId = null;
 		if ($userId) {
 			$this->selectedConversationId = $this->getConversationId($userId);
 		}
 		$conversations = $this->getConversations();
-
 		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $this->selectedConversationId]);
 	}
 
@@ -45,11 +42,11 @@ class MessengerController extends Controller
 		$conversation = $this->user->conversations;
 
 		if ($conversation->count() === 0) return $conversations;
-		
+
 		foreach ($conversation as $convo) {
 			$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
 			$latest = $convo->messages()->where('user_conversation_id', $convo->id)->latest()->first();
-			if(!$latest && $convo->id !== $this->selectedConversationId) continue;
+			if (!$latest && $convo->id !== $this->selectedConversationId) continue;
 
 			$conversations[] = [
 				'id' => $convo->id,
@@ -69,15 +66,13 @@ class MessengerController extends Controller
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
 		// userId could be user_one OR user_two
-
-		$conversation = $this->user->conversations()->where('user_one', $userId)->orWhere('user_two', $userId)->first();
-		if (!$conversation) {
-			$conversation = $this->user->conversations()->create([
+		$conversation = $this->user->conversations()
+			->where('user_one', $userId)
+			->orWhere('user_two', $userId)
+			->firstOrCreate([
 				'user_one' => $this->user->id,
 				'user_two' => $userId
 			]);
-		}
-
 
 		return $conversation->id;
 	}
@@ -95,7 +90,7 @@ class MessengerController extends Controller
 		$user_id = Auth::user()->id;
 
 		$conversation = UserConversation::find($request->conversationId);
-		if (!$conversation) return null;
+		if (!$conversation) return response("Conversation Not Found", 404);
 		if ($conversation->user_one !== $user_id && $conversation->user_two !== $user_id) abort(403, 'Unauthorized action.');
 
 		$userProfile = $conversation->users()[0]->id === $user_id ? $conversation->users()[1]->profile : $conversation->users()[0]->profile;
@@ -103,7 +98,6 @@ class MessengerController extends Controller
 		$userImage = $userProfile->primaryImageURL();
 		$userName = $userProfile->display_name;
 		$userAge = $userProfile->age();
-
 
 		$user = [
 			'id' => $userId,
@@ -153,11 +147,12 @@ class MessengerController extends Controller
 	/**
 	 * Authorise the user to perform the action by validating they have access to the conversation and are logged in
 	 */
-	private function authorise(Request $request){
-		if(!Auth::check()) abort(401, 'Not Authorised.');
+	private function authorise(Request $request)
+	{
+		if (!Auth::check()) abort(401, 'Not Authorised.');
 		$convo = UserConversation::find($request->conversation_id);
-		if(!$convo) abort(404, 'Conversation not found.');
-		if($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
+		if (!$convo) abort(404, 'Conversation not found.');
+		if ($convo->user_one !== auth()->user()->id && $convo->user_two !== auth()->user()->id) abort(403, 'Unauthorized action.');
 		return true;
 	}
 }
