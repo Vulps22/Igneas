@@ -110,11 +110,12 @@ function recipientMessage(message) {
 }
 
 function conversationItem(conversation) {
-	if(!conversation) throw new Error('Conversation is Was Null or Undefined');
+	if (!conversation) throw new Error('Conversation is Null or Undefined');
 	// Create a new conversation item element
 	const conversationItem = document.createElement('div');
 	conversationItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'hover:bg-gray-100', 'cursor-pointer', 'conversation-list-item');
 	conversationItem.id = 'conversation' + conversation.id;
+	conversationItem.setAttribute('data-conversation-id', conversation.id);
 	conversationItem.addEventListener('click', () => {
 		selectConversation(conversation.id);
 	});
@@ -188,7 +189,8 @@ function initMessenger() {
 			
 			updateConversationList(event.message)
 				.then(() => {
-					document.getElementById('noConvo').setAttribute('hidden', true);
+					var noConvoElement = document.getElementById('noConvo')
+					if (noConvoElement) noConvoElement.setAttribute('hidden', true);
 					console.log(event.message)
 					//update conversation list with latest message
 					var message = document.getElementById('message' + event.message.conversation_id);
@@ -201,16 +203,23 @@ function initMessenger() {
 }
 
 function updateConversationList(message) {
+	console.log("Update")
 	return new Promise((resolve, reject) => {
-		console.log(message);
 		//get an array of all the conversation id's in the conversation list
-		var conversationIds = [];
-		var conversations = document.getElementsByClassName('conversation-list-item');
+		let conversationExists = false;
+		conversation = null;
+		var conversations = document.getElementsByName('conversation-list-item');
 		for (var i = 0; i < conversations.length; i++) {
-			conversationIds.push(conversations[i].getAttribute('data-conversation-id'));
+			console.log(conversations[i].getAttribute('data-conversation-id'))
+			if (conversations[i].getAttribute('data-conversation-id') == message.conversation_id) {
+				conversationExists = true;
+				conversation = conversations[i];
+			}
 		}
+
 		//if the conversation id is not in the conversation list, add it
-		if (!conversationIds.includes(message.conversation_id)) {
+		if (!conversationExists) {
+			console.log("Conversation Not Found in List");
 			//get the conversation from the server
 			$.ajax({
 				url: '/messenger/find/' + message.conversation_id,
@@ -226,7 +235,13 @@ function updateConversationList(message) {
 					reject(error);
 				},
 			});
-		} else {
+		} else { //the conversation is in the list; Move it to the top
+			if(!conversation) resolve();
+			
+			conversation.remove();
+			var conversationList = document.getElementById('conversation-list');
+			conversationList.prepend(conversation);
+
 			resolve();
 		}
 	});

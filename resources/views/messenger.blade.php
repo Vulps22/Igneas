@@ -9,7 +9,7 @@
 		<p id="noConvo" class="ml-52 pt-10">You have no conversations.</p>
 		@else
 		@foreach ($conversations as $conversation)
-		<div id="conversation{{$conversation['id']}}" class="block hover:bg-gray-100 conversation" onclick="selectConversation('<?= $conversation['id']; ?>')">
+		<div id="conversation{{ $conversation['id'] }}" name="conversation-list-item" class="block hover:bg-gray-100 conversation" data-conversation-id="{{ $conversation['id'] }}" onclick="selectConversation('<?= $conversation['id']; ?>')">
 			<x-conversation-list-item :conversation-id="$conversation['id']" :user="$conversation['user']" :latest-message="$conversation['latest'] ? $conversation['latest']->text : ''" />
 		</div>
 		@endforeach
