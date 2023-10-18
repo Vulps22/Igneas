@@ -115,7 +115,7 @@ function conversationItem(conversation) {
 	const conversationItem = document.createElement('div');
 	conversationItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'hover:bg-gray-100', 'cursor-pointer', 'conversation-list-item');
 	conversationItem.id = 'conversation' + conversation.id;
-	conversationItem.setAttribute('data-conversation-id', conversation.id);
+	conversationItem.setName('data-conversation-id', conversation.id);
 	conversationItem.addEventListener('click', () => {
 		selectConversation(conversation.id);
 	});
@@ -202,8 +202,6 @@ function initMessenger() {
 		});
 }
 
-// Keep list of known conversation ids
-const conversationIds = new Set();
 
 function updateConversationList(message) {
 
@@ -227,21 +225,28 @@ function updateConversationList(message) {
 			//get the conversation from the server
 			$.ajax({
 				url: '/messenger/find/' + message.conversation_id,
-				type: 'GET'
+				type: 'GET',
+				success: function (response) {
+					console.log(response)
+					// Add the conversation to the conversation list
+					var conversationList = document.getElementById('conversation-list');
+					conversationList.prepend(conversationItem(response));
+					resolve();
+				},
+				error: function (xhr, status, error) {
+					reject(error);
+				},
 			});
 
 		} else { //the conversation is in the list; Move it to the top
-			if(!conversation) resolve();
-			
+			if (!conversation) resolve();
+
 			conversation.remove();
 			var conversationList = document.getElementById('conversation-list');
 			conversationList.prepend(conversation);
 
 			resolve();
-		} catch (error) {
-			reject(error);
 		}
-
 	});
 
 }
