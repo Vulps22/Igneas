@@ -115,6 +115,7 @@ function conversationItem(conversation) {
 	const conversationItem = document.createElement('div');
 	conversationItem.classList.add('flex', 'items-center', 'justify-between', 'p-4', 'hover:bg-gray-100', 'cursor-pointer', 'conversation-list-item');
 	conversationItem.id = 'conversation' + conversation.id;
+	conversationItem.setAttribute('data-conversation-id', conversation.id);
 	conversationItem.addEventListener('click', () => {
 		selectConversation(conversation.id);
 	});
@@ -188,7 +189,8 @@ function initMessenger() {
 
 			updateConversationList(event.message)
 				.then(() => {
-					document.getElementById('noConvo').setAttribute('hidden', true);
+					var noConvoElement = document.getElementById('noConvo')
+					if (noConvoElement) noConvoElement.setAttribute('hidden', true);
 					console.log(event.message)
 					//update conversation list with latest message
 					var message = document.getElementById('message' + event.message.conversation_id);
@@ -204,30 +206,36 @@ function initMessenger() {
 const conversationIds = new Set();
 
 function updateConversationList(message) {
-console.log("CONVERSATION UPDATE!");
-	return new Promise(async (resolve, reject) => {
 
-		console.log(conversationIds);
-		console.log("Looking For: ", message.conversation_id);
-		// If conversation already exists, resolve immediately
-		if (conversationIds.has(message.conversation_id)) {
-			console.log("Found Conversation");
-			return resolve();
+	console.log("Update")
+	return new Promise((resolve, reject) => {
+		//get an array of all the conversation id's in the conversation list
+		let conversationExists = false;
+		conversation = null;
+		var conversations = document.getElementsByName('conversation-list-item');
+		for (var i = 0; i < conversations.length; i++) {
+			console.log(conversations[i].getAttribute('data-conversation-id'))
+			if (conversations[i].getAttribute('data-conversation-id') == message.conversation_id) {
+				conversationExists = true;
+				conversation = conversations[i];
+			}
 		}
-		console.log("Conversation Not Found");
-		// Otherwise fetch conversation details and add 
-		try {
-			const response = await $.ajax({
+
+		//if the conversation id is not in the conversation list, add it
+		if (!conversationExists) {
+			console.log("Conversation Not Found in List");
+			//get the conversation from the server
+			$.ajax({
 				url: '/messenger/find/' + message.conversation_id,
 				type: 'GET'
 			});
 
-			// Add conversation to DOM
-			const conversationList = document.getElementById('conversation-list');
-			conversationList.prepend(conversationItem(response));
-
-			// Add id to known list
-			conversationIds.add(message.conversation_id);
+		} else { //the conversation is in the list; Move it to the top
+			if(!conversation) resolve();
+			
+			conversation.remove();
+			var conversationList = document.getElementById('conversation-list');
+			conversationList.prepend(conversation);
 
 			resolve();
 		} catch (error) {
