@@ -200,37 +200,41 @@ function initMessenger() {
 		});
 }
 
+// Keep list of known conversation ids
+const conversationIds = new Set(); 
+
 function updateConversationList(message) {
-	return new Promise((resolve, reject) => {
-		console.log(message);
-		//get an array of all the conversation id's in the conversation list
-		var conversationIds = [];
-		var conversations = document.getElementsByClassName('conversation-list-item');
-		for (var i = 0; i < conversations.length; i++) {
-			conversationIds.push(conversations[i].getAttribute('data-conversation-id'));
-		}
-		//if the conversation id is not in the conversation list, add it
-		if (!conversationIds.includes(message.conversation_id)) {
-			//get the conversation from the server
-			$.ajax({
-				url: '/messenger/find/' + message.conversation_id,
-				type: 'GET',
-				success: function (response) {
-					console.log(response)
-					// Add the conversation to the conversation list
-					var conversationList = document.getElementById('conversation-list');
-					conversationList.prepend(conversationItem(response));
-					resolve();
-				},
-				error: function (xhr, status, error) {
-					reject(error);
-				},
-			});
-		} else {
-			resolve();
-		}
-	});
+
+  return new Promise(async (resolve, reject) => {
+
+    // If conversation already exists, resolve immediately
+    if (conversationIds.has(message.conversation_id)) {
+      return resolve();
+    }
+
+    // Otherwise fetch conversation details and add 
+    try {
+      const response = await $.ajax({
+        url: '/messenger/find/' + message.conversation_id,
+        type: 'GET' 
+      });
+      
+      // Add conversation to DOM
+      const conversationList = document.getElementById('conversation-list');
+      conversationList.prepend(conversationItem(response));
+
+      // Add id to known list
+      conversationIds.add(message.conversation_id);
+
+      resolve();  
+    } catch (error) {
+      reject(error);
+    }
+
+  });
+
 }
+
 function loadConversation() {
 	// Get the conversation ID from the conversation element
 	const conversationId = document.getElementById('conversation').getAttribute('data-conversation-id');
