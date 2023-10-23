@@ -25,3 +25,30 @@ body {
 .image-selected {
 	border: 5px solid #2c2c2c;
 }
+
+/* Hamburger line animations */
+.hamburger-top {
+	@apply absolute h-[2px] w-[20px] bg-black;
+	transform: 
+	  rotate(0deg) translateY(-6px) 
+	  rotate(0deg);
+  }
+  
+  /* Rotate first line */  
+  .open .hamburger-top {
+	transform:
+	  rotate(45deg) translateY(0px)
+	  rotate(-45deg);  
+  }
+  
+  /* Fade out middle line */
+  .open .hamburger-middle {
+	opacity: 0; 
+  }
+  
+  /* Rotate last line */
+  .open .hamburger-bottom {
+	transform: 
+	  rotate(-45deg) translateY(6px)
+	  rotate(45deg);
+  }

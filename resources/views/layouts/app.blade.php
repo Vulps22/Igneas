@@ -24,11 +24,13 @@
 
 
 
-	<script type="module" src="/js/global.js"></script>
+	<script src="/js/global.js"></script>
 
 	@auth
 	<script>
-		window.user = {!!json_encode(Auth::user()->id);!!};
+		window.user = {
+			!!json_encode(Auth::user() - > id);!!
+		};
 	</script>
 	@endauth
 
@@ -54,10 +56,10 @@
 		<div class="flex justify-between text-white">
 			This website uses cookies to ensure you get the best experience on our website.
 			<div>
-			<button class="text-l bg-blue-500 p-2 border border-0 rounded" onclick="acceptCookies()">Accept Cookies</button>
-			<button class="ml-2 text-l bg-red-500 p-2 border border-0 rounded" onclick="declineCookies()">Decline Cookies</button>
+				<button class="text-l bg-blue-500 p-2 border border-0 rounded" onclick="acceptCookies()">Accept Cookies</button>
+				<button class="ml-2 text-l bg-red-500 p-2 border border-0 rounded" onclick="declineCookies()">Decline Cookies</button>
+			</div>
 		</div>
-	</div>
 </footer>
 
 
