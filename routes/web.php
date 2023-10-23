@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Middleware\isAuthenticated;
 use App\Livewire\ProfileEditor;
 use App\Livewire\ProfileView;
 use Illuminate\Support\Facades\Route;
@@ -18,9 +19,7 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Route::get('/', function () {
-	if (Auth::check()) {
-		return redirect()->route('home');
-	}
+	if (isAuthenticated::authenticated()) return redirect('/home');
 	return view('welcome');
 });
 
@@ -37,24 +36,19 @@ Route::post('/register', 'App\Http\Controllers\Auth\RegisterController@create')-
 Route::get('/logout', 'App\Http\Controllers\Auth\LoginController@logout')->name('logout');
 
 //Authorised routes
-Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/profile', ProfileEditor::class)->name('profile.editor');
-Route::get('/profile/{userId}', ProfileView::class)->name('profile.view');
+Route::get('/home', [HomeController::class, 'index'])->name('home')->middleware('auth.check');
+Route::get('/profile', ProfileEditor::class)->name('profile.editor')->middleware('auth.check');
+Route::get('/profile/{userId}', ProfileView::class)->name('profile.view')->middleware('auth.check');
 
 //messenger routes
-Route::get('/messenger', 'App\Http\Controllers\MessengerController@index')->name('messenger');
-Route::get('/messenger/{userId}', 'App\Http\Controllers\MessengerController@index')->name('conversation');
-Route::post('messenger/send', 'App\Http\Controllers\MessengerController@createMessage')->name('send.message');
-Route::get('messenger/{conversation_id}/messages', 'App\Http\Controllers\MessengerController@getMessages')->name('get.messages');
-Route::get('messenger/find/{conversationId}', 'App\Http\Controllers\MessengerController@getConversation')->name('get.conversation');
+Route::get('/messenger', 'App\Http\Controllers\MessengerController@index')->name('messenger')->middleware('auth.check');
+Route::get('/messenger/{userId}', 'App\Http\Controllers\MessengerController@index')->name('conversation')->middleware('auth.check');
+Route::post('messenger/send', 'App\Http\Controllers\MessengerController@createMessage')->name('send.message')->middleware('auth.check');
+Route::get('messenger/{conversation_id}/messages', 'App\Http\Controllers\MessengerController@getMessages')->name('get.messages')->middleware('auth.check');
+Route::get('messenger/find/{conversationId}', 'App\Http\Controllers\MessengerController@getConversation')->name('get.conversation')->middleware('auth.check');
 
 //userController routes
-Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location');
-Route::post('/save_user_profile', 'App\Http\Controllers\UserController@save_user_profile')->name('profile.save');
-Route::post('/user_profile_image', 'App\Http\Controllers\UserController@save_user_profile_image')->name('profile.save.image');
-Route::delete('/user_profile_image', 'App\Http\Controllers\UserController@delete_user_profile_image')->name('profile.delete.image');
-
-Route::post('/components/{component}', function ($component) {
-	$data = json_decode(request()->getContent(), true);
-	return view('components.' . $component, $data)->render();
-});
+Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location')->middleware('auth.check');
+Route::post('/save_user_profile', 'App\Http\Controllers\UserController@save_user_profile')->name('profile.save')->middleware('auth.check');
+Route::post('/user_profile_image', 'App\Http\Controllers\UserController@save_user_profile_image')->name('profile.save.image')->middleware('auth.check');
+Route::delete('/user_profile_image', 'App\Http\Controllers\UserController@delete_user_profile_image')->name('profile.delete.image')->middleware('auth.check');
