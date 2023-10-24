@@ -74,7 +74,7 @@ function removePhotoCard(position) {
 
 	// Create p 
 	const p = document.createElement('p');
-	p.textContent = 'Upload profile images';
+	//p.textContent = 'Upload profile images';
 
 	// Append elements
 	innerDiv.appendChild(addSvgElement());
