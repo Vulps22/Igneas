@@ -11,6 +11,7 @@ class UserAccessToken extends Model
 	use HasFactory;
 
 	protected $primaryKey = 'token';
+	public $incrementing = false;
 	
 	protected $fillable = ['user_id', 'token', 'agent', 'expires_at'];
 
@@ -27,11 +28,10 @@ class UserAccessToken extends Model
 	{
 		$token = new static;
 		$token->user_id = auth()->id();
-		$token->token = Str::random(60);
+		$token->token = Str::uuid();
 		$token->agent = request()->header('User-Agent');
 		$token->expires_at = now()->addMonth();
 		$token->save();
-
 		return $token;
 	}
 

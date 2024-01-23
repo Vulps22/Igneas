@@ -46,20 +46,13 @@ class LoginController extends Controller
 
 	public function login(Request $request)
 	{
-		$this->validate($request, [
-			'email' => 'required|email',
-			'password' => 'required'
-		]);
+		if(!$this->ensure($request->all(), ['email', 'password'])) return $this->error('Please enter your email and password to login', 400);
 
 		if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-
-			if ($request->remember && $request->hasCookie('accept_cookies')) {
-				$token = UserAccessToken::generate()->token;
-				return redirect()->route('home')->withCookie(Cookie::make('remember_me', $token, 43830));
-			}
-			return redirect()->route('home');
+			$token = UserAccessToken::generate()->token;
+			return $this->success(['token' => $token]); //user has been logged in. Front end should store token as cookie if acceptable
 		}
-		return back()->withInput($request->only('email'));
+		return $this->error('Incorrect Username or Password', 401); //username or password was wrong
 	}
 
 	public function logout(Request $request)
@@ -68,19 +61,15 @@ class LoginController extends Controller
 		if ($request->hasCookie('remember_me')) {
 			$cookie = $request->cookie('remember_me');
 			$token = UserAccessToken::where('token', $cookie)->first();
-			if($token) $token->delete();
+			if ($token) $token->delete();
 
 			auth()->logout();
-			$cookie = Cookie::forget('remember_me');
-			return redirect('/')->withCookie($cookie);
+
+			return $this->success();
 		}
 
 		auth()->logout();
-		return redirect('/');
+		return $this->success('Logout Sucessful');
 	}
 
-	public function index()
-	{
-		return view('auth.login');
-	}
 }
