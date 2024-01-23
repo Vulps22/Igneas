@@ -1,3 +1,10 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+$route = Route::currentRouteName();
+?>
+
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -41,8 +48,19 @@
 <body class="bg-neutral-900 text-white h-screen">
 
 	<div id="app" class="h-full">
-		@include('components.navbar')
-
+		<!--Mobile Friendly Navigation Bars-->
+		<div class="hidden">
+			<?php error_log("Route: $route")?>
+			<?php if ($route === 'messenger') { ?>
+				@include('components.navbar-messenger')
+			<?php } else { ?>
+				@include('components.navbar')
+			<?php } ?>
+		</div>
+		<!--Desktop Nav Bar never needs to change-->
+		<div class="">
+			@include('components.navbar')
+		</div>
 		<main class="pt-4 overflow-y-auto scrollbar hooky-scrollbar" style="height: 94.5vh;">
 			@yield('content')
 		</main>

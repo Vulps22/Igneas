@@ -1,43 +1,5 @@
-<!--<div>
-	<button class="fixed top-0 left-0 block hamburger focus:outline-none h-15" onclick="toggleNav()">
-
-		<span class="hamburger-top origin-top-left transition duration-300"></span>
-
-		<span class="hamburger-middle transition duration-300"></span>
-
-		<span class="hamburger-bottom origin-bottom-left transition duration-300"></span>
-
-	</button>
-
-	<nav class="hidden fixed inset-y-0 left-0 z-20 w-[300px] py-6 px-6 transition-all duration-300 bg-white border-r border-gray-200 lg:static lg:inset-auto lg:w-auto lg:py-0 lg:px-0 lg:border-none" aria-label="Global">
-		!-- Logo --
-		<div class="flex pr-20">
-			<a href="/" class="-m-1.5 p-1.5">
-				<span class="sr-only">Igneas</span>
-				<img class="h-8 w-auto border border-0 rounded-full" src="storage/images/logo.png" alt="">
-			</a>
-		</div>
-
-		!-- Desktop nav --
-		<div class="lg:flex grow">
-			@auth
-			<a href="/home" class="text-sm leading-6 pl-5">The Grid</a>
-			<a href="/profile" class="text-sm leading-6 pl-5">Profile</a>
-			<a href="/messenger" class="text-sm leading-6 pl-5">Messenger</a>
-			@endauth
-		</div>
-		<div class="hidden lg:flex lg:flex-1 lg:justify-end">
-			@guest
-			<a href="/login" class="text-sm leading-6 ">Log in <span aria-hidden="true">&rarr;</span></a>
-			@else
-			<a href="/logout" class="text-sm leading-6 ">Log Out</a>
-			@endguest
-		</div>
-	</nav>
-</div>
--->
-
 <div>
+	<!-- Desktop Nav Bar -->
 	<nav class="relative px-4 pt-1 flex justify-between items-center bg-none">
 		<a href="/" class="-m-1.5 p-1.5">
 			<span class="sr-only">Igneas</span>
@@ -68,7 +30,8 @@
 		@endguest
 	</nav>
 
-	<div class="navbar-menu relative z-50 hidden">
+	<!-- Mobile Nav Bar -->
+	<div id="mobile-nav" class="navbar-menu relative z-50 hidden">
 		<!--<div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-25"></div>-->
 		@auth
 		<nav class="fixed top-0 left-0 bottom-0 flex flex-col w-5/6 max-w-sm py-6 px-6 bg-neutral-800 border-r overflow-y-auto">
@@ -106,4 +69,7 @@
 		</nav>
 		@endauth
 	</div>
+	<div id="mobile-nav-messenger" hidden>
+    @include('components.navbar-messenger')
+  </div>
 </div>

@@ -184,6 +184,18 @@ function selectConversation(id) {
 	var conversationComponent = document.getElementById('conversation');
 	conversationComponent.removeAttribute('hidden');
 
+	const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+	if (isMobile) {
+		document.getElementById("convo-wrapper").removeAttribute('hidden');
+		document.getElementById("conversation-list").setAttribute('hidden', true)
+		const navbar = document.getElementById('mobile-nav');
+		const messengerNavbar = document.getElementById('mobile-nav-messenger');
+	  
+		navbar.hidden = true;
+		messengerNavbar.hidden = false;
+	}
+
 	//get messages for conversation
 	getMessages();
 }
@@ -272,6 +284,24 @@ function loadConversation() {
 	if (conversationId) {
 		// Set the conversation ID on the message form
 		selectConversation(conversationId);
+	}
+}
+
+function deselectConversation() {
+	console.log("deselect");
+	const isMobile = window.matchMedia('(max-width: 768px)').matches;
+	//hide the conversation component
+	var conversationComponent = document.getElementById('conversation');
+	conversationComponent.setAttribute('hidden', true);
+ 
+	if (isMobile) {
+		document.getElementById("convo-wrapper").setAttribute('hidden', true);
+		document.getElementById("conversation-list").removeAttribute('hidden');
+		const navbar = document.getElementById('mobile-nav');
+		const messengerNavbar = document.getElementById('mobile-nav-messenger');
+	  
+		navbar.hidden = false;
+		messengerNavbar.hidden = true;
 	}
 }
 
