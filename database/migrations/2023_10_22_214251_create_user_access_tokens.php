@@ -17,6 +17,7 @@ return new class extends Migration
 			$table->string('agent');
 			$table->timestamps();
 			$table->date('expires_at');
+			$table->boolean('immortal')->default(false);
 		});
 	}
 

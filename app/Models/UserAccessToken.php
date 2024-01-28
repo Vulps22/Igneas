@@ -59,4 +59,9 @@ class UserAccessToken extends Model
 
 		return $oneYearAgo->greaterThan($tokenCreatedAt) || now()->greaterThan($this->expires_at);
 	}
+
+	public function user() {
+		return $this->belongsTo(User::class, 'user_id');
+
+	}
 }
