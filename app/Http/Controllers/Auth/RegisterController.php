@@ -86,6 +86,10 @@ class RegisterController extends Controller
 		]);
 		$profile->save();
 
+		for ($i=0; $i < 7; $i++) { 
+			$profile->addImage('', $i);
+		}
+
 		$health = UserHealth::create([
 			'user_id' => $user->id,
 		]);
