@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use MatanYadaev\EloquentSpatial\Objects\Geometry;
 
 class HomeController extends Controller
 {
