@@ -148,4 +148,13 @@ class UserProfile extends Model
 	//print_r($data);
 		return $data;
 	}
+
+	public function short_array(){
+		$data = [];
+		$data['display_name'] = $this->display_name;
+		$data['age'] = $this->show_age ? $this->age() : null;
+		$data['show_location'] = $this->show_location;
+
+		return $data;
+	}
 }

@@ -25,3 +25,6 @@ Route::post('/profile/save_location', 'App\Http\Controllers\UserProfileControlle
 Route::post('/profile/save_profile_image', 'App\Http\Controllers\UserProfileController@save_user_profile_image');
 Route::post('/profile/delete_profile_image', 'App\Http\Controllers\UserProfileController@delete_user_profile_image');
 Route::post('/profile/{user}', 'App\Http\Controllers\UserProfileController@get');
+
+//Grid API
+Route::post('/home/grid', 'App\Http\Controllers\HomeController@get_grid');

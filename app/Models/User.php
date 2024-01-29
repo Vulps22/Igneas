@@ -18,6 +18,13 @@ class User extends Authenticatable
 	/**
 	 * The attributes that are mass assignable.
 	 *
+	 * @property string $name
+	 * @property string $email
+	 * @property string date_of_birth
+	 * @property bool terms_accepted
+	 * @property string password
+	 * @property \MatanYadaev\EloquentSpatial\Objects\Point location
+	 *  
 	 * @var array<int, string>
 	 */
 	protected $fillable = [
