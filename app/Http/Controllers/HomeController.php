@@ -17,7 +17,7 @@ class HomeController extends Controller
 	 */
 	public function get_grid(Request $request)
 	{
-		if(!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
+		if (!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
 
 		// Get the current user's location
 		$currentUser = $this->auth->user;
@@ -45,13 +45,13 @@ class HomeController extends Controller
 		}
 		$profiles = [];
 		/** @var \App\Models\User $user */
-		foreach($users as $user){
-			
+		foreach ($users as $user) {
+
 			$profile = $user->profile->short_array();
 			$profile['user_id'] = $user->id;
 			$profile['location'] = $currentLocation ? ($profile['show_location'] ? $user->distance($currentLocation) : null) : null;
 			$profiles[] = $profile;
-			}
+		}
 
 		return $this->success($profiles);
 	}

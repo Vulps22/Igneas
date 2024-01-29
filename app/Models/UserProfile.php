@@ -145,11 +145,12 @@ class UserProfile extends Model
 		$data['primary_image'] = $this->primaryImageURL();
 		$data['health'] = $this->health;
 
-	//print_r($data);
+		//print_r($data);
 		return $data;
 	}
 
-	public function short_array(){
+	public function short_array()
+	{
 		$data = [];
 		$data['display_name'] = $this->display_name;
 		$data['age'] = $this->show_age ? $this->age() : null;
