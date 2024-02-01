@@ -22,11 +22,11 @@ class Authenticate extends Middleware
 
         $token = $request->bearerToken();
         //var_dump($token);
-        if(!$token || !$this->ensure($request->all(), ['user_id'])) return response('Authentication data missing', 403);
+        if(!$token) return response('Authentication data missing', 403);
 
         $authentication = new AuthenticationController();
 
-        if ($authentication->check($token, $request->user_id)) {
+        if ($authentication->check($token)) {
             $request->attributes->add(['auth' => $authentication]);
 
             return $next($request);

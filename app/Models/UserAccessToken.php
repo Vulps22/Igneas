@@ -54,6 +54,9 @@ class UserAccessToken extends Model
 
 	public function expired()
 	{
+
+		if($this->immortal) return false; //immortal tokens will never expire and exist for dev purposes only
+
 		$oneYearAgo = now()->subYear();
 		$tokenCreatedAt = $this->created_at;
 

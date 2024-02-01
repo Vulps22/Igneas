@@ -13,7 +13,7 @@ class AuthenticationController extends BaseController
 {
     public User $user;
 
-    public function check($token, $id)
+    public function check($token)
     {
         $accessToken = UserAccessToken::find($token);
         if (!$accessToken || !$accessToken->validate(true)) {
@@ -25,11 +25,6 @@ class AuthenticationController extends BaseController
         //var_dump($user);
         if (!$user) {
             Log::error("Attempt to validate token with no assigned User: $token");
-            $this->delete($accessToken);
-            return false;
-        }
-        if ($user->id != $id) {
-            Log::error("Invalid User ID when checking: $token : $id : User: {$user->id}");
             $this->delete($accessToken);
             return false;
         }
