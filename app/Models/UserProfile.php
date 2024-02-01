@@ -55,16 +55,16 @@ class UserProfile extends Model
 	public function primaryImageURL()
 	{
 		$filename = $this->user->images()->first()->filename;
-		if($filename && Storage::exists($filename)) return Storage::url($filename);
-		return Storage::url('images/default.png');;
+		if ($filename && Storage::exists($filename)) return Storage::url($filename);
+		return Storage::url('images/default.png');
 	}
 
 	public function addImage($filename, $position = null)
 	{
-		if($this->images()->count() > 6) return false;
+		if ($this->images()->count() > 5) return false;
 
 		$this->images()->create([
-			'user_id' => $this->user_id, 
+			'user_id' => $this->user_id,
 			'filename' => $filename,
 			'position' => $position ?? $this->images()->count() - 1,
 		]);
@@ -74,7 +74,7 @@ class UserProfile extends Model
 
 	public function age()
 	{
-		if($this->show_age) return $this->user->age();
+		if ($this->show_age) return $this->user->age();
 
 		return '';
 	}
@@ -129,4 +129,33 @@ class UserProfile extends Model
 		return (count($relationship) > 1) ? "{$relationship[0]} {$relationship[1]}" : $relationship[0];
 	}
 
+	public function array()
+	{
+		$data = [];
+		foreach ($this->fillable as $property) {
+			$data[$property] = $this->$property;
+		}
+
+		$data['age'] = $this->age();
+		$data['images'] = [];
+		foreach ($this->images as $image) {
+			$filename = $image->filename;
+			if ($filename && Storage::exists($filename)) $data['images'][$image->position] = Storage::url($filename);
+		}
+		$data['primary_image'] = $this->primaryImageURL();
+		$data['health'] = $this->health;
+
+		//print_r($data);
+		return $data;
+	}
+
+	public function short_array()
+	{
+		$data = [];
+		$data['display_name'] = $this->display_name;
+		$data['age'] = $this->show_age ? $this->age() : null;
+		$data['show_location'] = $this->show_location;
+
+		return $data;
+	}
 }

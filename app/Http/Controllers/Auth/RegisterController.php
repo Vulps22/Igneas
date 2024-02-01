@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
+use App\Models\UserAccessToken;
 use App\Models\UserHealth;
 use App\Models\UserProfile;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -42,23 +44,6 @@ class RegisterController extends Controller
 		$this->middleware('guest');
 	}
 
-	/**
-	 * Get a validator for an incoming registration request.
-	 *
-	 * @param  array  $data
-	 * @return \Illuminate\Contracts\Validation\Validator
-	 */
-	protected function validator(array $data)
-	{
-		return Validator::make($data, [
-			'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-			'dob' => ['required', 'date', 'before:18 years ago'],
-			'password' => ['required', 'string', 'min:8', 'confirmed'],
-		],
-		[
-			'dob.before' => 'You must be at least 18 years old to register. Valid Photograph ID will be required to verify your age.',
-		]);
-	}
 
 	/**
 	 * Create a new user instance after a valid registration.
@@ -71,26 +56,39 @@ class RegisterController extends Controller
 
 		$data = $request->all();
 
+		if (!$this->ensure($data, ['email', 'password', 'date_of_birth'])) return $this->error('Please fill in all required fields to continue.', 400);
+
 		//find user by email
 		$user = User::where('email', $data['email'])->first();
-		if($user) return redirect()->back()->withErrors(['error' => 'An account with this email address already exists. Please login.'])->withInput();
+		if ($user) return $this->error(['error' => 'An account with this email address already exists. Please login.'], 409);
 
-		$validated = $this->validator($data)->validate();
-		if(!$validated) return redirect()->back()->withErrors($validated);
+
+		// Check if the user is over 18
+		$dateOfBirth = Carbon::parse($data['date_of_birth']);
+		$eighteenYearsAgo = Carbon::now()->subYears(18);
+
+		if ($dateOfBirth->isAfter($eighteenYearsAgo)) {
+			return $this->error(['error' => 'You must be 18 or older to register.'], 400);
+		}
+
 
 		$user = User::create([
 			'email' => $data['email'],
-			'date_of_birth' => $data['dob'],
+			'date_of_birth' => $data['date_of_birth'],
 			'password' => Hash::make($data['password']),
 			'terms_accepted' => now(),
 		]);
-		
-		if(!$user) return redirect()->back()->withErrors(['error' => 'An error occurred while creating your account. Please try again.']);
+
+		if (!$user) return $this->error('An error occurred while creating your account. Please try again.', 500);
 
 		$profile = UserProfile::create([
 			'user_id' => $user->id,
 		]);
 		$profile->save();
+
+		for ($i=0; $i < 7; $i++) { 
+			$profile->addImage('', $i);
+		}
 
 		$health = UserHealth::create([
 			'user_id' => $user->id,
@@ -99,6 +97,8 @@ class RegisterController extends Controller
 
 		auth()->loginUsingId($user->id);
 
-		return redirect()->route('profile.editor');
+		$token = UserAccessToken::generate()->token;
+
+		return $this->success($token);
 	}
 }

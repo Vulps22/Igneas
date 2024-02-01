@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="px-52 grid grid-cols-3 lg:grid-cols-6 gap-4">
+<div class="md:px-52 grid grid-cols-3 lg:grid-cols-6 md:gap-4">
 	<!--create a grid of 5 columns-->
 	@if(count($users) === 0)
 		<div class="col-span-3 lg:col-span-6">

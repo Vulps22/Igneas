@@ -21,10 +21,10 @@
 </div>
 
 <div class="flex flex-col md:flex-row">
-	<div class="grow pl-52 h-full">
+	<div id="login-view" class="grow md:pl-52 h-full">
 		<x-login />
 	</div>
-	<div class="grow pr-52 h-full">
+	<div id="register-view" class="max-md:hidden grow md:pr-52 h-full">
 		<x-register />
 	</div>
 </div>

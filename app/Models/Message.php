@@ -29,6 +29,21 @@ class Message extends Model
 
 	public function image()
 	{
-		return $this->hasOne(Image::class, 'image_id');
+		return $this->hasOne(UserImage::class, 'id');
+	}
+
+	public function toArray()
+	{
+		$data = [
+			'id' => $this->id,
+			'text' => $this->text,
+			'image' => $this->image->imageURL(),
+			'sender' => [
+				'id' => $this->sender->id,
+				'name' => $this->sender->profile->display_name
+			]
+		];
+
+		return $data;
 	}
 }

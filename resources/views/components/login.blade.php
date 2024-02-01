@@ -2,12 +2,13 @@
 
 	<div class="w-full max-w-md">
 
-		<div class="rounded-lg border-2 border-neutral-800">
+		<div class="rounded-lg max-md:border-0 md:border-2 border-neutral-800">
 
-			<div class="px-6 py-4 border-b border-neutral-800">
+			<div class="flex justify-between px-6 py-4 md:border-b border-neutral-800">
 				<h2 class="text-lg font-medium">
 					Login
 				</h2>
+				<a class="md:hidden text-sm text-blue-600 hover:underline" onclick="showRegister()"> Not Registered? </a>
 			</div>
 
 			<div class="p-6">

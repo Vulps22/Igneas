@@ -4,7 +4,7 @@
 @endpush
 @section('content')
 <div class="flex h-full">
-	<div id="conversation-list" class="w-1/4 border-r">
+	<div id="conversation-list" class="md:w-1/4 md:border-r">
 		@if(count($conversations) == 0)
 		<p id="noConvo" class="ml-52 pt-10">You have no conversations.</p>
 		@else
@@ -15,7 +15,7 @@
 		@endforeach
 		@endif
 	</div>
-	<div class="w-3/4 p-4">
+	<div id="convo-wrapper" class="md:w-3/4 p-4">
 		<x-conversation :conversationId="$selectedConversation" />
 
 	</div>

@@ -1,3 +1,10 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+$route = Route::currentRouteName();
+?>
+
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -24,11 +31,13 @@
 
 
 
-	<script type="module" src="/js/global.js"></script>
+	<script src="/js/global.js"></script>
 
 	@auth
 	<script>
-		window.user = {!!json_encode(Auth::user()->id);!!};
+		window.user = {
+			!!json_encode(Auth::user() - > id);!!
+		};
 	</script>
 	@endauth
 
@@ -39,8 +48,19 @@
 <body class="bg-neutral-900 text-white h-screen">
 
 	<div id="app" class="h-full">
-		@include('components.navbar')
-
+		<!--Mobile Friendly Navigation Bars-->
+		<div class="hidden">
+			<?php error_log("Route: $route")?>
+			<?php if ($route === 'messenger') { ?>
+				@include('components.navbar-messenger')
+			<?php } else { ?>
+				@include('components.navbar')
+			<?php } ?>
+		</div>
+		<!--Desktop Nav Bar never needs to change-->
+		<div class="">
+			@include('components.navbar')
+		</div>
 		<main class="pt-4 overflow-y-auto scrollbar hooky-scrollbar" style="height: 94.5vh;">
 			@yield('content')
 		</main>
@@ -54,10 +74,10 @@
 		<div class="flex justify-between text-white">
 			This website uses cookies to ensure you get the best experience on our website.
 			<div>
-			<button class="text-l bg-blue-500 p-2 border border-0 rounded" onclick="acceptCookies()">Accept Cookies</button>
-			<button class="ml-2 text-l bg-red-500 p-2 border border-0 rounded" onclick="declineCookies()">Decline Cookies</button>
+				<button class="text-l bg-blue-500 p-2 border border-0 rounded" onclick="acceptCookies()">Accept Cookies</button>
+				<button class="ml-2 text-l bg-red-500 p-2 border border-0 rounded" onclick="declineCookies()">Decline Cookies</button>
+			</div>
 		</div>
-	</div>
 </footer>
 
 
