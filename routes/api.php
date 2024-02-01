@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\MessengerController;
+use App\Http\Controllers\UserProfileController;
+use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,15 +18,35 @@ use Illuminate\Support\Facades\Route;
 
 
 //user API
-Route::post('/user/login', 'App\Http\Controllers\Auth\LoginController@login');
-Route::post('/user/create', 'App\Http\Controllers\Auth\RegisterController@create');
-
+Route::group([
+    'prefix' => 'user',
+], function () {
+    Route::post('login', 'App\Http\Controllers\Auth\LoginController@login');
+    Route::post('create', 'App\Http\Controllers\Auth\RegisterController@create');
+});
 //Profile API
-Route::post('/profile/save', 'App\Http\Controllers\UserProfileController@save_user_profile');
-Route::post('/profile/save_location', 'App\Http\Controllers\UserProfileController@set_user_location');
-Route::post('/profile/save_profile_image', 'App\Http\Controllers\UserProfileController@save_user_profile_image');
-Route::post('/profile/delete_profile_image', 'App\Http\Controllers\UserProfileController@delete_user_profile_image');
-Route::post('/profile/{user}', 'App\Http\Controllers\UserProfileController@get');
 
-//Grid API
-Route::post('/home/grid', 'App\Http\Controllers\HomeController@get_grid');
+Route::group([
+    'prefix' => 'profile',
+    'middleware' => Authenticate::class,
+    'controller' => UserProfileController::class,
+], function () {
+    Route::post('save', 'save_user_profile');
+    Route::post('save_location', 'set_user_location');
+    Route::post('save_profile_image', 'save_user_profile_image');
+    Route::post('delete_profile_image', 'delete_user_profile_image');
+    Route::get('list', 'list');
+    Route::get('{user}', 'get');
+});
+
+//messenger API
+Route::group([
+    'prefix' => 'messenger',
+    'middleware' => Authenticate::class,
+    'controller' => MessengerController::class,
+], function(){
+    Route::get('list', 'list_conversations');
+    Route::get('get_conversation_for', 'getConversationForUser');
+    Route::get('get_conversation', 'getConversation');
+    Route::post('message/create', 'createMessage');
+});

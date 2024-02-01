@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+/*
 Route::get('/', function () {
 	if (isAuthenticated::authenticated()) return redirect('/home');
 	return view('welcome');
@@ -43,7 +43,9 @@ Route::get('messenger/{conversation_id}/messages', 'App\Http\Controllers\Messeng
 Route::get('messenger/find/{conversationId}', 'App\Http\Controllers\MessengerController@getConversation')->name('get.conversation')->middleware('auth.check');
 
 //userController routes
-Route::post('/set_user_location', 'App\Http\Controllers\UserController@set_user_location')->name('set_user_location')->middleware('auth.check');
-Route::post('/save_user_profile', 'App\Http\Controllers\UserController@save_user_profile')->name('profile.save')->middleware('auth.check');
-Route::post('/user_profile_image', 'App\Http\Controllers\UserController@save_user_profile_image')->name('profile.save.image')->middleware('auth.check');
-Route::delete('/user_profile_image', 'App\Http\Controllers\UserController@delete_user_profile_image')->name('profile.delete.image')->middleware('auth.check');
+Route::post('/set_user_location', 'App\Http\Controllers\UserPController@set_user_location')->name('set_user_location')->middleware('auth.check');
+Route::post('/save_user_profile', 'App\Http\Controllers\UserPController@save_user_profile')->name('profile.save')->middleware('auth.check');
+Route::post('/user_profile_image', 'App\Http\Controllers\UserPController@save_user_profile_image')->name('profile.save.image')->middleware('auth.check');
+Route::delete('/user_profile_image', 'App\Http\Controllers\UserPController@delete_user_profile_image')->name('profile.delete.image')->middleware('auth.check');
+
+*/

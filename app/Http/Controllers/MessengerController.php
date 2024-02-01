@@ -6,6 +6,7 @@ use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,61 +22,69 @@ class MessengerController extends Controller
 	{
 	}
 
-	public function index($userId = null)
+
+	public function list_conversations(Request $request)
 	{
-		if (!auth()->check()) return redirect()->route('login'); //user is not logged in, Redirect them
+		$auth = $request->get('auth');
 
-		$this->user = auth()->user();
-		$this->selectedConversationId = null;
-		if ($userId) {
-			$this->selectedConversationId = $this->getConversationId($userId);
-		}
-		$conversations = $this->getConversations();
-		return view('messenger', ['conversations' => $conversations, 'selectedConversation' => $this->selectedConversationId]);
-	}
-
-
-	private function getConversations()
-	{
 		$conversations = [];
-		$conversation = $this->user->conversations;
+		$conversation = $auth->user->conversations;
 
 		if ($conversation->count() === 0) return $conversations;
 
 		foreach ($conversation as $convo) {
-			$user = $convo->users()->wherePivotNotIn('user_id', [$this->user->id])->first()->profile;
+			$userProfile = $convo->users()->wherePivotNotIn('user_id', [$auth->user->id])->first()->profile;
 			//$user = $convo->users()[0]->id === $this->user->id ? $convo->users()[1]->profile : $convo->users()[0]->profile;
 			$latest = $convo->messages()->latest()->first();
 			if (!$latest && $convo->id !== $this->selectedConversationId) continue; //This is a Dead Conversation (User created it but never sent a message) -- These should be hidden from the other user
 
 			$conversations[] = [
 				'id' => $convo->id,
-				'user' => $user,
+				'user' => $userProfile->short_array(),
 				'latest' => $latest
 			];
 		}
 
-		return $conversations;
+		return $this->success($conversations);
 	}
 
 	/**
-	 * get the specific conversation id between the user and the other user
+	 * Get or create the conversation between the Authorised user and $userId
 	 */
-	public function getConversationId($userId)
+	public function getConversationForUser(Request $request)
 	{
+
 		//$request->userId is the id of the user you're talking to
 		// if the conversation doesn't exist, create it
 		// userId could be user_one OR user_two
 
-		$conversation = $this->user->conversations()->whereHas('users', function ($query) use ($userId) {
-			$query->where('id', $userId);
+		$auth = $request->get('auth');
+
+		if (!$request->userId) return $this->error('User Id Missing', 403);
+
+		$user = User::find($request->userId);
+		if(!$user) return $this->error('User Not Found', 402);
+
+		$conversation = $auth->user->conversations()->whereHas('users', function ($query) use ($user) {
+			$query->where('users.id', $user->id);
 		})->first();
 		if (!$conversation) {
-			$conversation = $this->user->conversations()->create();
+			$conversation = $auth->user->conversations()->create();
 			$conversation->save();
-			$conversation->users()->attach($userId);
+			$conversation->users()->attach($user->id);
 		}
-		return $conversation->id;
+
+		$messages = $conversation->messages()
+			->orderBy('created_at', 'desc')
+			->take(50)
+			->get();
+
+		return $this->success([
+			'id' => $conversation->id,
+			'display_as' => "{$user->profile->display_name} | {$user->age()}",
+			'profile_image' => $user->profile_picture(),
+			'messages' => $messages
+		]);
 	}
 
 	/**
@@ -87,44 +96,41 @@ class MessengerController extends Controller
 		//$request->conversationId is the id of the conversation you're searching for
 		// if the conversation doesn't exist, something happened that shouldn't have... do nothing
 		// verify the authenticated user is one of the conversation's users
+		$auth = $request->get('auth');
 
-		$user_id = Auth::user()->id;
+		$user_id = $auth->user->id;
 
-		$conversation = Conversation::find($request->conversationId);
-		if (!$conversation) return response("Conversation Not Found", 404);
-		if (!$conversation->users()->wherePivot('user_id', $user_id)->first()) abort(403, 'Unauthorized action.');
+		$conversation = Conversation::find($request->conversation_id);
+		if (!$conversation) return $this->error("Conversation Not Found", 404);
+		if (!$conversation->users()->wherePivot('user_id', $user_id)->first()) $this->error(403, 'Unauthorized action.');
 
 		$userProfile = $conversation->users()->wherePivotNotIn('user_id', [$user_id])->first()->profile;
-		$userId = $userProfile->id;
-		$userImage = $userProfile->primaryImageURL();
-		$userName = $userProfile->display_name;
-		$userAge = $userProfile->age();
 
-		$user = [
-			'id' => $userId,
-			'name' => $userName,
-			'age' => $userAge,
-			'image' => $userImage,
-		];
+		$user = $userProfile->short_array();
+
+		$messages = $conversation->messages()
+			->orderBy('created_at', 'desc')
+			->take(50)
+			->get();
 
 		$conversation = [
 			'id' => $conversation->id,
 			'user' => $user,
-			'latest' => $conversation->messages()->latest()->first()
+			'messages' => $messages
 		];
 
-		return $conversation;
+		return $this->success($conversation);
 	}
 
 	public function createMessage(Request $request)
 	{
 
-		$this->authorise($request);
+		$auth = $request->get('auth');		
 
 		//create a new message
 		$message = Message::create([
 			'conversation_id' => $request->conversation_id,
-			'sender_id' => $request->user()->id,
+			'sender_id' => $auth->user->id,
 			'text' => $request->text,
 		]);
 		$message->save();
@@ -132,7 +138,7 @@ class MessengerController extends Controller
 		//broadcast the message
 		broadcast(new MessageSent($message))->toOthers();
 
-		return ['status' => 'Message Sent!', 'messages' => $message];
+		return $this->success(['message' => $message->toArray()]);
 	}
 
 	public function getMessages(Request $request)

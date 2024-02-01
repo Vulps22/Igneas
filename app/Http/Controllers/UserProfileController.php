@@ -12,10 +12,53 @@ use MatanYadaev\EloquentSpatial\Objects\Point;
 
 class UserProfileController extends Controller
 {
+
+	public function list(Request $request) {
+				
+		$auth = $request->get('auth');
+
+		// Get the current user's location
+		$currentUser = $auth->user;
+		$currentLocation = $currentUser->location;
+		$users = null;
+	
+		if (!$currentLocation) {
+			//get the users unfiltered
+			$users = User::query()
+				->where('id', '<>', $currentUser->id)
+				->limit(50)
+				->get();
+		}
+
+		if ($currentLocation) {
+			// Get all users sorted by distance from the current user
+			$users = User::query()
+				->where('id', '<>', $currentUser->id)
+				->orderByDistance('location', $currentLocation)
+				->limit(50)
+				->get();
+		}
+
+		if (!$users) {
+			$users = [];
+		}
+		$profiles = [];
+		/** @var \App\Models\User $user */
+		foreach ($users as $user) {
+
+			$profile = $user->profile->short_array();
+			$profile['user_id'] = $user->id;
+			$profile['location'] = $currentLocation ? ($profile['show_location'] ? $user->distance($currentLocation) : null) : null;
+			$profiles[] = $profile;
+		}
+
+		return $this->success($profiles);
+	}
+
 	public function set_user_location(Request $request)
 	{
 
-		if(!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
+		$auth = $request->get('auth');
 
 		$required = [
 			'longitude',
@@ -27,7 +70,7 @@ class UserProfileController extends Controller
 		$latitude = $request->latitude;
 		$longitude = $request->longitude;
 
-		$user =  $this->auth->user;
+		$user =  $auth->user;
 		$user->location = new Point($latitude, $longitude);
 		$user->save();
 
@@ -37,8 +80,7 @@ class UserProfileController extends Controller
 	public function save_user_profile(Request $request)
 	{
 
-		if(!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
-
+		$auth = $request->get('auth');
 			// Specify default values for each field
 			$dataDefaults = [
 				'display_name' => '',
@@ -65,7 +107,7 @@ class UserProfileController extends Controller
 		// Use the fill function to fill the $data array with default values
 		$data = $this->fill($request->all(), $dataDefaults);
 
-		$user = $this->auth->user;
+		$user = $auth->user;
 		if (!$user) return $this->error('User Not Found', 500);
 		$user_id = $user->id;
 
@@ -103,12 +145,11 @@ class UserProfileController extends Controller
 	function save_user_profile_image(Request $request)
 	{
 
-		if(!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
-
+		$auth = $request->get('auth');
 
 		$position = intVal($request->position);
 		$imageFile = $request->file('image');
-		$user = $this->auth->user;
+		$user = $auth->user;
 
 		if (!$user) return $this->error("User not found", 401);
 		if ($position < 0 || $position > 6) return $this->error('Invalid Position', 500);
@@ -135,15 +176,15 @@ class UserProfileController extends Controller
 
 	function delete_user_profile_image(Request $request)
 	{
-		if(!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
+		$auth = $request->get('auth');
 
 		$position = intVal($request->position);
-		$user = $this->auth->user;
+		$user = $auth->user;
 		if (!$user) return $this->error("User not found", 401);
 		if ($position < 0 || $position > 6) return $this->error('Invalid Position', 500);
 		//var_dump($user->images()->get());
 		$imageModel = $user->images()->where('position', $position)->first();
-		var_dump($imageModel);
+
 		$filename = $imageModel->filename;
 		if (!$filename) return $this->error('File Not Found', 404);
 		Storage::delete("public/images/$filename");
@@ -155,10 +196,10 @@ class UserProfileController extends Controller
 
 	public function get(User $user, Request $request) {
 
-		if(!$this->verify($request)) return $this->error("You are not authorized to perform this action", 401);
+		$auth = $request->get('auth');
 
 		$profileArray = $user->profile->array();
-		if($profileArray['show_location']) $profileArray['distance'] = $user->distance($this->auth->user->location);
+		if($profileArray['show_location']) $profileArray['distance'] = $user->distance($auth->user->location);
 		else $profileArray['distance'] = null;
 		if(!$profileArray['show_age']) $profileArray['age'] = null;
 
