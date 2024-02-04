@@ -74,7 +74,7 @@ class UserProfileController extends Controller
 		$user->location = new Point($latitude, $longitude);
 		$user->save();
 
-		return $this->success("Location updated successfully");
+		return $this->success('Location updated successfully');
 	}
 
 	public function save_user_profile(Request $request)
@@ -151,7 +151,7 @@ class UserProfileController extends Controller
 		$imageFile = $request->file('image');
 		$user = $auth->user;
 
-		if (!$user) return $this->error("User not found", 401);
+		if (!$user) return $this->error('User not found', 401);
 		if ($position < 0 || $position > 6) return $this->error('Invalid Position', 500);
 		if (!$imageFile) return $this->error('No image uploaded', 400);
 		if (!$imageFile->isValid()) return $this->error('Invalid image', 400);
@@ -168,7 +168,7 @@ class UserProfileController extends Controller
 
 		$imageModel->filename = $name;
 		$url = asset(Storage::url("images/$name"));
-		//dump("Generated URL: $url");
+
 		$imageModel->save();
 
 		return $this->success(['url' => $url, 'position' => $position]);
@@ -180,9 +180,9 @@ class UserProfileController extends Controller
 
 		$position = intVal($request->position);
 		$user = $auth->user;
-		if (!$user) return $this->error("User not found", 401);
+		if (!$user) return $this->error('User not found', 401);
 		if ($position < 0 || $position > 6) return $this->error('Invalid Position', 500);
-		//var_dump($user->images()->get());
+
 		$imageModel = $user->images()->where('position', $position)->first();
 
 		$filename = $imageModel->filename;
@@ -191,7 +191,7 @@ class UserProfileController extends Controller
 		$imageModel->filename = '';
 		$imageModel->save();
 
-		return $this->success(["position" => $position]);
+		return $this->success(['position' => $position]);
 	}
 
 	public function get(User $user, Request $request) {

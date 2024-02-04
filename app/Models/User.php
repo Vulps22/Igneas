@@ -94,7 +94,7 @@ class User extends Authenticatable
 
 	public function distance(Point $point = null)
 	{
-		if (!$point) return "";
+		if (!$point) return '';
 
 		$userLoc = $this->location;
 		$userLong = $userLoc->longitude;
@@ -103,11 +103,11 @@ class User extends Authenticatable
 		$pointLong = $point->longitude;
 		$pointLat = $point->latitude;
 
-		$distance = $this->distanceBetween($userLat, $userLong, $pointLat, $pointLong, "K");
+		$distance = $this->distanceBetween($userLat, $userLong, $pointLat, $pointLong, 'K');
 
-		if ($distance < 1) return "< 1km";
+		if ($distance < 1) return '< 1km';
 
-		return round($distance, 2) . "km";
+		return round($distance, 2) . 'km';
 	}
 
 	/**
@@ -137,9 +137,9 @@ class User extends Authenticatable
 		$miles = $dist * 60 * 1.1515;
 		$unit = strtoupper($unit);
 
-		if ($unit == "K") {
+		if ($unit == 'K') {
 			return ($miles * 1.609344);
-		} else if ($unit == "N") {
+		} else if ($unit == 'N') {
 			return ($miles * 0.8684);
 		} else {
 			return $miles;

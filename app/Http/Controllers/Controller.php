@@ -22,7 +22,7 @@ class Controller extends BaseController
     function success($data = '', $code = 200)
     {
         return json_encode([
-            'response' => "success",
+            'response' => 'success',
             'data' => $data,
             'code' => $code
         ]);
@@ -31,7 +31,7 @@ class Controller extends BaseController
     function error($data = '', $code = 500)
     {
         return json_encode([
-            'response' => "error",
+            'response' => 'error',
             'data' => $data,
             'code' => $code
         ]);
