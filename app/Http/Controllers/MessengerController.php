@@ -101,7 +101,7 @@ class MessengerController extends Controller
 		$user_id = $auth->user->id;
 
 		$conversation = Conversation::find($request->conversation_id);
-		if (!$conversation) return $this->error("Conversation Not Found", 404);
+		if (!$conversation) return $this->error('Conversation Not Found', 404);
 		if (!$conversation->users()->wherePivot('user_id', $user_id)->first()) $this->error(403, 'Unauthorized action.');
 
 		$userProfile = $conversation->users()->wherePivotNotIn('user_id', [$user_id])->first()->profile;

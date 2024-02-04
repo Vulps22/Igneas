@@ -49,8 +49,8 @@ class LoginController extends Controller
 		if(!$this->ensure($request->all(), ['email', 'password'])) return $this->error('Please enter your email and password to login', 400);
 
 		if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-			$token = UserAccessToken::generate()->token;
-			return $this->success(['token' => $token]); //user has been logged in. Front end should store token as cookie if acceptable
+			$token = UserAccessToken::generate();
+			return $this->success(['token' => $token->token, 'expires' => $token->expires_at]); //user has been logged in. Front end should store token as cookie if acceptable
 		}
 		return $this->error('Incorrect Username or Password', 401); //username or password was wrong
 	}
