@@ -21,14 +21,6 @@ jobs:
       - name: Install Composer Dependencies
         run: composer install --no-interaction --no-ansi --no-progress --prefer-dist
 
-      - name: Install Node.js and NPM
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18' # Adjust the Node.js version as needed
-
-      - name: Install Node.js Dependencies
-        run: npm ci
-
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
@@ -40,7 +32,7 @@ jobs:
         run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && eval "$(ssh-agent -s)" && ssh-add ~/.ssh/github-login && git pull origin main'
          
       - name: Install dependencies on server
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && npm install && composer install && npm run build'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && composer install'
 
       - name: Recache files
         run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && php artisan optimize:clear && php artisan optimize'
