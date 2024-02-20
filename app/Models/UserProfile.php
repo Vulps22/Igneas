@@ -155,6 +155,7 @@ class UserProfile extends Model
 		$data['display_name'] = $this->display_name;
 		$data['age'] = $this->show_age ? $this->age() : null;
 		$data['show_location'] = $this->show_location;
+		$data['image'] = $this->primaryImageURL();
 
 		return $data;
 	}

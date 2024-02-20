@@ -48,13 +48,11 @@ class UserAccessToken extends Model
 		$isValid = !$this->expired();
 
 		if ($isValid && $renew) $this->renew();
-
 		return $isValid;
 	}
 
 	public function expired()
 	{
-
 		if($this->immortal) return false; //immortal tokens will never expire and exist for dev purposes only
 
 		$oneYearAgo = now()->subYear();

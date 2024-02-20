@@ -14,9 +14,11 @@ class UserProfileController extends Controller
 {
 
 	public function list(Request $request) {
-				
-		$auth = $request->get('auth');
 
+		$limit = 20;
+		$auth = $request->get('auth');
+		$page = $request->page ?? 1;
+		$offset = ($page - 1) * $limit;
 		// Get the current user's location
 		$currentUser = $auth->user;
 		$currentLocation = $currentUser->location;
@@ -26,7 +28,8 @@ class UserProfileController extends Controller
 			//get the users unfiltered
 			$users = User::query()
 				->where('id', '<>', $currentUser->id)
-				->limit(50)
+				->offset($offset)
+				->limit(20)
 				->get();
 		}
 
@@ -34,6 +37,7 @@ class UserProfileController extends Controller
 			// Get all users sorted by distance from the current user
 			$users = User::query()
 				->where('id', '<>', $currentUser->id)
+				->with('profile')
 				->orderByDistance('location', $currentLocation)
 				->limit(50)
 				->get();
@@ -42,15 +46,22 @@ class UserProfileController extends Controller
 		if (!$users) {
 			$users = [];
 		}
-		$profiles = [];
-		/** @var \App\Models\User $user */
-		foreach ($users as $user) {
+
+		$profiles = $users->map(function($user) use ($currentLocation) {
 
 			$profile = $user->profile->short_array();
+		  
 			$profile['user_id'] = $user->id;
-			$profile['location'] = $currentLocation ? ($profile['show_location'] ? $user->distance($currentLocation) : null) : null;
-			$profiles[] = $profile;
-		}
+		  
+			if ($currentLocation && $profile['show_location']) { 
+			  $profile['location'] = $user->distance($currentLocation);
+			} else {
+			  $profile['location'] = null;
+			}
+		  
+			return $profile;
+		  
+		  })->all();
 
 		return $this->success($profiles);
 	}

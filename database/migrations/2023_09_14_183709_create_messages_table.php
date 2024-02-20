@@ -15,7 +15,7 @@ return new class extends Migration
 			$table->id();
 			$table->foreignId('conversation_id');
 			$table->integer('sender_id');
-			$table->text('text')->default('');
+			$table->string('text')->default('');
 			$table->integer('image_id')->nullable();
 			$table->timestamps();
 		});

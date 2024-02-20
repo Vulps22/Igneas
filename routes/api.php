@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MessengerController;
+use App\Http\Controllers\UserAuthenticationController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group([
+    'prefix' => 'auth',
+    'controller' => UserAuthenticationController::class,
+], function () {
+    Route::get('verify', 'authenticate');
+});
 
 //user API
 Route::group([

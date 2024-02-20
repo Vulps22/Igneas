@@ -2,6 +2,8 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "start": "",
+        "send": "robocopy /mir /xo /s /e /np /njs /njh /ndl /nfl /nc /ns /np /r:5 /w:1 /tee /np /xd node_modules vendor . /path/to/your/local/webserver/",
         "dev": "vite",
         "build": "vite build"
     },
@@ -20,5 +22,8 @@
         "tailwindcss": "^3.3.3",
         "vite": "^4.0.0",
         "vue": "^3.2.37"
+    },
+    "dependencies": {
+        "npm-watch": "^0.11.0"
     }
 }

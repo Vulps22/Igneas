@@ -32,7 +32,7 @@ class Authenticate extends Middleware
             return $next($request);
         }
 
-        return response('Unauthenticated', 401);
+        return response('Unauthenticated: Check Failed', 401);
     }
 
     /**
