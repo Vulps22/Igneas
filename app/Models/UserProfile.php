@@ -79,21 +79,6 @@ class UserProfile extends Model
 		return '';
 	}
 
-	public function getHIVString()
-	{
-		if (!$this->health->show_hiv_status) return '';
-
-		if ($this->health->on_prep) $prep = 'on prep';
-		else $prep = 'not on prep';
-		return "{$this->health->hiv_status} | {$prep}";
-	}
-
-	public function getLastTestString()
-	{
-		if (!$this->health->show_last_STI_test) return '';
-		return $this->health->last_STI_test->format('d/m/Y');
-	}
-
 	public function getGenderString()
 	{
 		$gender = explode('_', $this->gender);
@@ -129,6 +114,15 @@ class UserProfile extends Model
 		return (count($relationship) > 1) ? "{$relationship[0]} {$relationship[1]}" : $relationship[0];
 	}
 
+	function getBodyString()
+	{
+		if (!$this->body_type) {
+			return '';
+		}
+	
+		return ucfirst($this->body_type);
+	}
+
 	public function array()
 	{
 		$data = [];
@@ -137,13 +131,21 @@ class UserProfile extends Model
 		}
 
 		$data['age'] = $this->age();
-		$data['images'] = [];
+		$data['gender'] = $this->getGenderString();
+		$data['dominance'] = $this->getDominanceString();
+		$data['ethnicity'] = $this->getEthnicityString();
+		$data['body_type'] = $this->getBodyString();
+		$data['looking_for'] = $this->getLookingForString();
+		$data['relationship_status'] = $this->getRelationshipString();
+		$data['position'] = $this->getPositionString();
+
+		$data['images'] = [["id" => 1, 'filename' => $this->primaryImageURL()]];
 		foreach ($this->images as $image) {
 			$filename = $image->filename;
-			if ($filename && Storage::exists($filename)) $data['images'][$image->position] = Storage::url($filename);
+			if ($filename && Storage::exists("images/$filename")) $data['images'][] = ['id' => $image->id, 'filename' => Storage::url("images/$filename")];
 		}
 		$data['primary_image'] = $this->primaryImageURL();
-		$data['health'] = $this->health;
+		$data['health'] = $this->health->toArray();
 
 		//print_r($data);
 		return $data;

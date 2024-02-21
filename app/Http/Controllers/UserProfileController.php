@@ -159,25 +159,22 @@ class UserProfileController extends Controller
 		$auth = $request->get('auth');
 
 		$position = intVal($request->position);
-		$imageFile = $request->file('image');
 		$user = $auth->user;
 
 		if (!$user) return $this->error('User not found', 401);
 		if ($position < 0 || $position > 6) return $this->error('Invalid Position', 500);
+
+		$imageFile = ImageController::store($request);
+
 		if (!$imageFile) return $this->error('No image uploaded', 400);
-		if (!$imageFile->isValid()) return $this->error('Invalid image', 400);
-
-		//upload the file
-		$name = uniqid() . '.' . $imageFile->extension();
-
-		$imageFile->storeAs('public/images', $name);
 
 		$imageModel = UserImage::firstOrCreate([
 			'user_id' => $user->id,
-			'position' => $position
+			'position' => $position,
+			'filename' => $imageFile['filename']
 		]);
 
-		$imageModel->filename = $name;
+		$name = $imageFile['filename'];
 		$url = asset(Storage::url("images/$name"));
 
 		$imageModel->save();
@@ -198,7 +195,7 @@ class UserProfileController extends Controller
 
 		$filename = $imageModel->filename;
 		if (!$filename) return $this->error('File Not Found', 404);
-		Storage::delete("public/images/$filename");
+		Storage::delete("images/$filename");
 		$imageModel->filename = '';
 		$imageModel->save();
 
@@ -213,8 +210,6 @@ class UserProfileController extends Controller
 		if($profileArray['show_location']) $profileArray['distance'] = $user->distance($auth->user->location);
 		else $profileArray['distance'] = null;
 		if(!$profileArray['show_age']) $profileArray['age'] = null;
-
-		if(!$profileArray['health']['show_hiv_status']) $profileArray['health']['hiv_status'] = null;
 
 		return $this->success($profileArray);
 		

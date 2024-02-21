@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\MessengerController;
 use App\Http\Controllers\UserAuthenticationController;
 use App\Http\Controllers\UserProfileController;
@@ -51,9 +52,18 @@ Route::group([
     'prefix' => 'messenger',
     'middleware' => Authenticate::class,
     'controller' => MessengerController::class,
-], function(){
+], function () {
     Route::get('list', 'list_conversations');
     Route::get('get_conversation_for', 'getConversationForUser');
     Route::get('get_conversation', 'getConversation');
     Route::post('message/create', 'createMessage');
+});
+
+Route::group([
+    'prefix' => 'image',
+    'controller' => ImageController::class,
+], function () {
+// Debug functions Do NOT release to production
+ //   Route::post('store', 'store');
+ //   Route::get('{image}', 'show');
 });
