@@ -21,7 +21,7 @@ class ImageController extends Controller
     {
 
         $file = $request->file('image');
-        if (!$file) return "file not found";
+        if (!$file) return "File Not Found";
 
         $path = $request->file('image')->store('images', 's3');
        // var_dump($path);
