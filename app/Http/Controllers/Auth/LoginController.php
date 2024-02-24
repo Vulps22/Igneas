@@ -44,17 +44,39 @@ class LoginController extends Controller
 	}
 
 
+	/**
+	 * Handle a login request to the application.
+	 *
+	 * Attempts to authenticate a user using the provided email and password.
+	 * If the authentication is successful, generates a new access token for the user.
+	 * Returns a success response with user ID, token, and expiration date if login is successful,
+	 * or an error response if the provided credentials are incorrect.
+	 *
+	 * @param \Illuminate\Http\Request $request The HTTP request object containing login credentials.
+	 * @return \Illuminate\Http\JsonResponse A JSON response indicating the success status of the login attempt and providing necessary details.
+	 */
 	public function login(Request $request)
 	{
-		if(!$this->ensure($request->all(), ['email', 'password'])) return $this->error('Please enter your email and password to login', 400);
+		if (!$this->ensure($request->all(), ['email', 'password'])) return $this->error('Please enter your email and password to login', 400);
 
 		if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
 			$token = UserAccessToken::generate();
-			return $this->success(['token' => $token->token, 'expires' => $token->expires_at]); //user has been logged in. Front end should store token as cookie if acceptable
+			return $this->success(['id' => auth()->user()->id, 'token' => $token->token, 'expires' => $token->expires_at]); //user has been logged in. Front end should store token as cookie if acceptable
 		}
 		return $this->error('Incorrect Username or Password', 401); //username or password was wrong
 	}
 
+	/**
+ * Handle a logout request from the application.
+ *
+ * Logs out the authenticated user and deletes the remember me token if present.
+ * Returns a success response upon successful logout, or an error response if logout fails.
+ *
+ * @param \Illuminate\Http\Request $request The HTTP request object containing authentication information.
+ * @return \Illuminate\Http\JsonResponse A JSON response indicating the success status of the logout attempt.
+ */
+
+ //TODO: This does not use middleware or Bearer Tokens
 	public function logout(Request $request)
 	{
 		// Check if the 'remember_me' cookie exists and delete it
@@ -71,5 +93,4 @@ class LoginController extends Controller
 		auth()->logout();
 		return $this->success('Logout Sucessful');
 	}
-
 }

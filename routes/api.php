@@ -18,6 +18,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+|
+| These routes handle user authentication and token verification.
+|
+*/
 Route::group([
     'prefix' => 'auth',
     'controller' => UserAuthenticationController::class,
@@ -25,15 +33,30 @@ Route::group([
     Route::get('verify', 'authenticate');
 });
 
-//user API
+
+/*
+|--------------------------------------------------------------------------
+| User Routes
+|--------------------------------------------------------------------------
+|
+| These routes handle user authentication, registration, and related actions.
+|
+*/
 Route::group([
     'prefix' => 'user',
 ], function () {
     Route::post('login', 'App\Http\Controllers\Auth\LoginController@login');
     Route::post('create', 'App\Http\Controllers\Auth\RegisterController@create');
 });
-//Profile API
 
+/*
+|--------------------------------------------------------------------------
+| Profile Routes
+|--------------------------------------------------------------------------
+|
+| These routes handle user profile management and retrieval.
+|
+*/
 Route::group([
     'prefix' => 'profile',
     'middleware' => Authenticate::class,
@@ -42,12 +65,19 @@ Route::group([
     Route::post('save', 'save_user_profile');
     Route::post('save_location', 'set_user_location');
     Route::post('save_profile_image', 'save_user_profile_image');
-    Route::post('delete_profile_image', 'delete_user_profile_image');
+    Route::delete('delete_profile_image', 'delete_user_profile_image');
     Route::get('list', 'list');
     Route::get('{user}', 'get');
 });
 
-//messenger API
+/*
+|--------------------------------------------------------------------------
+| Messenger Routes
+|--------------------------------------------------------------------------
+|
+| These routes handle messenger related actions.
+|
+*/
 Route::group([
     'prefix' => 'messenger',
     'middleware' => Authenticate::class,
@@ -58,12 +88,19 @@ Route::group([
     Route::get('get_conversation', 'getConversation');
     Route::post('message/create', 'createMessage');
 });
-
+/*
+|--------------------------------------------------------------------------
+| Image Routes
+|--------------------------------------------------------------------------
+|
+| These routes handle image-related actions.
+| DEBUG ONLY DO NOT EXPOSE TO PRODUCTION
+|
+*/
 Route::group([
     'prefix' => 'image',
     'controller' => ImageController::class,
 ], function () {
-// Debug functions Do NOT release to production
  //   Route::post('store', 'store');
  //   Route::get('{image}', 'show');
 });
