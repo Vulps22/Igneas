@@ -35,4 +35,4 @@ jobs:
         run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/igneas-api && composer install'
 
       - name: Recache files
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/igneas-api && php artisan optimize:clear && php artisan optimize'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/igneas-api && php artisan migrate && php artisan optimize:clear && php artisan optimize'
