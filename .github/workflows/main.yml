@@ -29,10 +29,10 @@ jobs:
           if_key_exists: replace
 
       - name: Upload Project to Ubuntu Server
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && eval "$(ssh-agent -s)" && ssh-add ~/.ssh/github-login && git pull origin main'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/igneas-api && eval "$(ssh-agent -s)" && ssh-add ~/.ssh/github-login && git pull origin main'
          
       - name: Install dependencies on server
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && composer install'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/igneas-api && composer install'
 
       - name: Recache files
-        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/Smashr && php artisan optimize:clear && php artisan optimize'
+        run: ssh -i ~/.ssh/id_rsa vulps@161.97.68.166 'cd /var/www/html/igneas-api && php artisan optimize:clear && php artisan optimize'
