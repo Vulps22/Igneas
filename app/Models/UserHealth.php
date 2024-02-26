@@ -73,11 +73,13 @@ class UserHealth extends Model
 	 */
 	public function toArray($isMe = false)
 	{
-		return [
+		$data = [
 			"user_id" => $this->user_id,
 			"show_hiv_status" => $this->show_hiv_status,
 			"hiv_status" => $isMe ? $this->hiv_status : $this->getHIVString(),
 			"last_test" => $isMe ? $this->last_STI_test : $this->getLastTestString()
 		];
+		if($isMe) $data['on_prep'] = $this->on_prep;
+		return $data;
 	}
 }

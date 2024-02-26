@@ -63,7 +63,7 @@ Route::group([
     'controller' => UserProfileController::class,
 ], function () {
     Route::post('save', 'save_user_profile');
-    Route::post('save_location', 'set_user_location');
+    Route::patch('save_location', 'set_user_location');
     Route::post('save_profile_image', 'save_user_profile_image');
     Route::delete('delete_profile_image', 'delete_user_profile_image');
     Route::get('list', 'list');

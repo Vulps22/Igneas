@@ -134,15 +134,16 @@ class UserProfileController extends Controller
 			'pronouns' => '',
 			'show_location' => 0,
 			'show_age' => 0,
-			'hiv_status' => '',
-			'last_STI_test' => null,
-			'on_prep' => 0,
-			'show_hiv_status' => 0,
+			'health' => [
+				'hiv_status' => '',
+				'last_STI_test' => null,
+				'on_prep' => 0,
+				'show_hiv_status' => 0,
+			]
 		];
 
 		// Use the fill function to fill the $data array with default values
 		$data = $this->fill($request->all(), $dataDefaults);
-
 		$user = $auth->user;
 		if (!$user) return $this->error('User Not Found', 500);
 		$user_id = $user->id;
@@ -163,16 +164,16 @@ class UserProfileController extends Controller
 		$profile->looking_for = $data['looking_for'];
 		$profile->gender = $data['gender'];
 		$profile->pronouns = $data['pronouns'];
-		$profile->show_location = $data['show_location'] === 'on' ? 1 : 0;
-		$profile->show_age = $data['show_age'] === 'on' ? 1 : 0;
+		$profile->show_location = $data['show_location'];
+		$profile->show_age = $data['show_age'];
 		$profile->save();
 
 		$sexual_health = UserHealth::findOrNew($user->id);
 		if (!$sexual_health->exists) $sexual_health['user_id'] = $user_id;
-		$sexual_health->hiv_status = $data['hiv_status'];
-		$sexual_health->last_STI_test = $data['last_STI_test'];
-		$sexual_health->on_prep = $data['on_prep'] === 'on' ? 1 : 0;
-		$sexual_health->show_hiv_status = $data['show_hiv_status'] === 'on' ? 1 : 0;
+		$sexual_health->hiv_status = $data['health']['hiv_status'];
+		$sexual_health->last_STI_test = $data['health']['last_test'];
+		$sexual_health->on_prep = $data['health']['on_prep'];
+		$sexual_health->show_hiv_status = $data['health']['show_hiv_status'];
 		$sexual_health->save();
 
 		return $this->success('Profile updated successfully');
@@ -262,9 +263,9 @@ class UserProfileController extends Controller
 		if ($auth->user->id == $user->id) $isMe = true;
 
 		$profileArray = $user->profile->array($isMe);
-		if ($profileArray['show_location']) $profileArray['distance'] = $user->distance($auth->user->location);
+		if ($profileArray['show_location'] && !$isMe) $profileArray['distance'] = $user->distance($auth->user->location);
 		else $profileArray['distance'] = null;
-		if (!$profileArray['show_age']) $profileArray['age'] = null;
+		if (!$profileArray['show_age'] && !$isMe) $profileArray['age'] = null;
 
 		return $this->success($profileArray);
 	}

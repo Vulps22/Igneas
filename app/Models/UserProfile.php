@@ -38,7 +38,7 @@ class UserProfile extends Model
 		'bio',
 		'height',
 		'weight',
-		'body type',
+		'body_type',
 		'position',
 		'dominance',
 		'ethnicity',
@@ -192,6 +192,29 @@ class UserProfile extends Model
 		$relationship = explode('_', $this->relationship_status);
 		return (count($relationship) > 1) ? "{$relationship[0]} {$relationship[1]}" : $relationship[0];
 	}
+
+	/**
+	 * Transforms the stored values of a person's sexuality into a formatted string for display.
+	 *
+	 * This function capitalizes the first letter of each word joined by a hyphen ("-").
+	 * If the sexuality is a single word, it capitalizes the first letter.
+	 *
+	 * @param string $sexuality The stored value of the person's sexuality.
+	 * @return string The formatted string representing the person's sexuality.
+	 */
+	public function getSexualityString()
+	{
+		// Split the sexuality string by hyphen
+		$parts = explode('-', $this->sexuality);
+
+		// Capitalize the first letter of each word
+		$parts = array_map('ucfirst', $parts);
+
+		return implode('-', $parts);
+
+	}
+
+
 	/**
 	 * Get a formatted string representation of the user's body type.
 	 *
@@ -237,6 +260,7 @@ class UserProfile extends Model
 	 */
 	public function array($isMe = false): array
 	{
+
 		$data = [];
 		foreach ($this->fillable as $property) {
 			$data[$property] = $this->$property;
@@ -245,6 +269,7 @@ class UserProfile extends Model
 		if (!$isMe) {
 			$data['age'] = $this->age();
 			$data['gender'] = $this->getGenderString();
+			$data['sexuality'] = $this->getSexualityString();
 			$data['dominance'] = $this->getDominanceString();
 			$data['ethnicity'] = $this->getEthnicityString();
 			$data['body_type'] = $this->getBodyString();
@@ -259,7 +284,7 @@ class UserProfile extends Model
 			if ($filename && Storage::exists("images/$filename")) $data['images'][] = ['id' => $image->id, 'filename' => Storage::url("images/$filename")];
 		}
 
-		$data['health'] = $this->health->toArray();
+		$data['health'] = $this->health->toArray($isMe);
 
 		return $data;
 	}
