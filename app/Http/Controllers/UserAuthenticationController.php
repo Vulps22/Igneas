@@ -32,4 +32,19 @@ class UserAuthenticationController extends Controller
 
         return $this->error('Access Denied: Token not valid', 401);
     }
+
+    public function deauthenticate(Request $request)
+    {
+        $token = $request->bearerToken();
+        $accessToken = UserAccessToken::find($token);
+        if (!$accessToken) return $this->success('Token Destroyed');
+        
+        $accessToken->delete();
+
+        $accessToken = UserAccessToken::find($token);
+        if($accessToken) return $this->error('Unable to destroy Access Token. This is a serious Error. Please Report it');
+        
+        return $this->success('Token Destroyed');
+
+    }
 }

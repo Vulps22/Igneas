@@ -31,6 +31,7 @@ Route::group([
     'controller' => UserAuthenticationController::class,
 ], function () {
     Route::get('verify', 'authenticate');
+    Route::delete('destroy', 'deauthenticate');
 });
 
 
