@@ -17,12 +17,11 @@ use Illuminate\Support\Facades\Auth;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-/*
+
 Route::get('/', function () {
-	if (isAuthenticated::authenticated()) return redirect('/home');
 	return view('welcome');
 });
-
+/*
 Auth::routes([
 	'register' => false,
 	'logout' => false,
