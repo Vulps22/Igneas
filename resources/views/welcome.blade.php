@@ -2,7 +2,7 @@
 
 @section('content')
 <div>
-	<h1> Smashr is in pre-alpha </h1>
-	<h2> You may log in and sign up but be aware that the site is not yet fully functional and data protection has <strong>not</strong> been implemented</h2>
+	<h1> Igneas API </h1>
+	<h2> You have reached the private API of <a href="https://igneas.app">Igneas</a>. It is an offence under the Computer Misuse Act to attempt to access this API through any software not associated realeased by the Igneas Team.</h2>
 </dv>
 @endsection

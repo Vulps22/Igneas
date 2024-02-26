@@ -24,60 +24,18 @@ $route = Route::currentRouteName();
 	<!-- Scripts -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 	<script src="https://kit.fontawesome.com/ac7deee7ba.js" crossorigin="anonymous"></script>
-	<script src="/js/cookies.js"></script>
-	@vite(['resources/sass/app.scss', 'resources/css/app.css', 'resources/js/app.js', 'resources/js/geolocation.js'])
-	@livewireScripts
-	@stack('scripts')
-
-
-
-	<script src="/js/global.js"></script>
-
-	@auth
-	<script>
-		window.user = {
-			!!json_encode(Auth::user() - > id);!!
-		};
-	</script>
-	@endauth
-
-	<!-- Styles -->
-	@livewireStyles
 </head>
 
-<body class="bg-neutral-900 text-white h-screen">
+<body>
 
-	<div id="app" class="h-full">
-		<!--Mobile Friendly Navigation Bars-->
-		<div class="hidden">
-			<?php error_log("Route: $route")?>
-			<?php if ($route === 'messenger') { ?>
-				@include('components.navbar-messenger')
-			<?php } else { ?>
-				@include('components.navbar')
-			<?php } ?>
-		</div>
-		<!--Desktop Nav Bar never needs to change-->
-		<div class="">
-			@include('components.navbar')
-		</div>
-		<main class="pt-4 overflow-y-auto scrollbar hooky-scrollbar" style="height: 94.5vh;">
+	<div id="app">
+		<main>
 			@yield('content')
 		</main>
 	</div>
 </body>
 
 <footer>
-	<!-- Cookie Banner HTML -->
-	<div class="hidden fixed bottom-0 left-0 right-0 p-3 bg-blue-950 shadow-md" id="cookie-banner">
-
-		<div class="flex justify-between text-white">
-			This website uses cookies to ensure you get the best experience on our website.
-			<div>
-				<button class="text-l bg-blue-500 p-2 border border-0 rounded" onclick="acceptCookies()">Accept Cookies</button>
-				<button class="ml-2 text-l bg-red-500 p-2 border border-0 rounded" onclick="declineCookies()">Decline Cookies</button>
-			</div>
-		</div>
 </footer>
 
 
