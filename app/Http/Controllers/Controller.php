@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Auth\AuthenticationController;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\Client\Response;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 
@@ -15,26 +16,28 @@ class Controller extends BaseController
 
     public $auth;
 
-    function __construct(AuthenticationController $authController){
+    function __construct(AuthenticationController $authController)
+    {
         $this->auth = $authController;
     }
 
     function success($data = '', $code = 200)
     {
-        return json_encode([
+        return response()->json([
             'response' => 'success',
             'data' => $data,
             'code' => $code
-        ]);
+        ], $code);
     }
 
     function error($data = '', $code = 500)
     {
-        return json_encode([
+
+        return response()->json([
             'response' => 'error',
             'data' => $data,
             'code' => $code
-        ]);
+        ], $code);
     }
 
     /**
@@ -48,7 +51,7 @@ class Controller extends BaseController
     {
         foreach ($fields as $field) {
             if (!isset($data[$field]) || !$data[$field]) {
-                 echo $field;
+                echo $field;
                 return false;
             }
         }
@@ -63,8 +66,8 @@ class Controller extends BaseController
             if (isset($array[$field]) && $array[$field] == null) {
                 // Update the value in $array with the value from $data
                 $array[$field] = $data[$field];
-            } elseif(!isset($array[$field])) {
-                
+            } elseif (!isset($array[$field])) {
+
                 // Use the default value if the field is null or non-existent in $data
                 $array[$field] = $defaultValue;
             }
@@ -73,8 +76,9 @@ class Controller extends BaseController
         return $array;
     }
 
-    function verify(Request $request) {
-        if(!$this->ensure($request->all(), ['token', 'user_id'])) return false; //make sure the Authentication data is in the request
+    function verify(Request $request)
+    {
+        if (!$this->ensure($request->all(), ['token', 'user_id'])) return false; //make sure the Authentication data is in the request
 
         return $this->auth->check($request->token, $request->user_id); //check the token is valid and "login" the user for this request
     }
